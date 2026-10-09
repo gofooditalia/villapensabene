@@ -22,7 +22,7 @@ const restaurantJsonLd = {
   "@type": "Restaurant",
   name: "Villa Pensabene - Ristorante Pizzeria",
   url: SITE_URL,
-  image: `${SITE_URL}/dishes/villa_001.jpg`,
+  image: `${SITE_URL}/og-image.jpg`,
   logo: `${SITE_URL}/logo.png`,
   telephone: "+39 327 414 6546",
   email: "villapensabeneristorante@gmail.com",
@@ -92,13 +92,13 @@ export const metadata: Metadata = {
     title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
     description:
       "Cucina siciliana, Giro Pizza, Giro Pasta e Pranzo della Domenica. Aperti tutti i giorni a cena, chiusi il lunedì.",
-    images: [{ url: "/dishes/villa_001.jpg", alt: "Un piatto di Villa Pensabene, Palermo" }],
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Villa Pensabene - Ristorante Pizzeria a Palermo" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
     description: "Cucina siciliana, Giro Pizza e Pranzo della Domenica a Palermo.",
-    images: ["/dishes/villa_001.jpg"],
+    images: ["/og-image.jpg"],
   },
   icons: {
     icon: [
