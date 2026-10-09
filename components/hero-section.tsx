@@ -1,29 +1,13 @@
 import { Button } from "@/components/ui/button"
 import { ChevronDown, BookOpen, Calendar } from "lucide-react"
+import { HeroVideo } from "@/components/hero-video"
 
 export function HeroSection() {
   return (
     <section id="home" className="relative min-h-[100dvh] flex items-center justify-center">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="hidden md:block w-full h-full object-cover"
-        >
-          <source src="/bg-video.mp4" type="video/mp4" />
-        </video>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="block md:hidden w-full h-full object-cover"
-        >
-          <source src="/bg-video-mobile.mp4" type="video/mp4" />
-        </video>
+        <HeroVideo />
         <div className="absolute inset-0 bg-foreground/50" />
       </div>
 

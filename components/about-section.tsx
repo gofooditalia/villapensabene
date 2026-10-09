@@ -1,5 +1,6 @@
 "use client"
 
+import { LazyVideo } from "@/components/lazy-video"
 import { Card } from "@/components/ui/card"
 import { Utensils, Waves, TreePine, Baby, Clock, ScrollText, Sparkles, PartyPopper, Cake, Wine, Phone } from "lucide-react"
 
@@ -29,16 +30,7 @@ export function AboutSection() {
 
           {/* Giro Pizza Promotional Video */}
           <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              className="w-full h-auto bg-black"
-            >
-              <source src="/giropizza.mp4" type="video/mp4" />
-            </video>
+            <LazyVideo src="/giropizza.mp4" poster="/posters/giropizza.jpg" className="w-full h-auto bg-black" />
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -189,16 +181,7 @@ export function AboutSection() {
                 />
               </div>
               <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  controls
-                  className="w-full h-auto bg-black"
-                >
-                  <source src="/events/pranzo-domenica-agriturismo/promo.mp4" type="video/mp4" />
-                </video>
+                <LazyVideo src="/events/pranzo-domenica-agriturismo/promo.mp4" poster="/posters/promo.jpg" className="w-full h-auto bg-black" />
               </div>
             </div>
 
@@ -305,16 +288,7 @@ export function AboutSection() {
 
             {/* Giro Pasta Promotional Video */}
             <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                className="w-full h-auto bg-black"
-              >
-                <source src="/giropasta.mp4" type="video/mp4" />
-              </video>
+              <LazyVideo src="/giropasta.mp4" poster="/posters/giropasta.jpg" className="w-full h-auto bg-black" />
             </div>
 
             <div className="grid lg:grid-cols-3 gap-12">
@@ -402,16 +376,7 @@ export function AboutSection() {
 
           {/* Events Promotional Video */}
           <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              className="w-full h-auto bg-black"
-            >
-              <source src="/eventi.mp4" type="video/mp4" />
-            </video>
+            <LazyVideo src="/eventi.mp4" poster="/posters/eventi.jpg" className="w-full h-auto bg-black" />
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
@@ -474,16 +439,7 @@ export function AboutSection() {
 
             {/* Promo Video */}
             <div className="max-w-sm mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                controls
-                className="w-full h-auto bg-black"
-              >
-                <source src="/events/compleanni_bimbi/villa pesabene video compleanni pome_001.mp4" type="video/mp4" />
-              </video>
+              <LazyVideo src="/events/compleanni_bimbi/villa pesabene video compleanni pome_001.mp4" poster="/posters/compleanni.jpg" className="w-full h-auto bg-black" />
             </div>
 
             <div className="flex justify-center">
