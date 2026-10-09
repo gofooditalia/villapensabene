@@ -2,7 +2,6 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
-import SplashScreen from "@/components/splash-screen"
 import "./globals.css"
 
 const _geist = Geist({ subsets: ["latin"] })
@@ -148,7 +147,6 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd) }}
         />
-        <SplashScreen />
         {children}
         <Analytics />
       </body>

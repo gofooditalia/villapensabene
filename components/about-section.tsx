@@ -30,7 +30,7 @@ export function AboutSection() {
 
           {/* Giro Pizza Promotional Video */}
           <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-            <LazyVideo src="/giropizza.mp4" poster="/posters/giropizza.jpg" className="w-full h-auto bg-black" />
+            <LazyVideo aspect="4/5" src="/giropizza.mp4" poster="/posters/giropizza.jpg" className="w-full h-auto bg-black" />
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -175,13 +175,17 @@ export function AboutSection() {
               <div className="relative mx-auto w-full max-w-sm">
                 <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full" />
                 <img
-                  src="/events/pranzo-domenica-agriturismo/poster.png"
+                  src="/events/pranzo-domenica-agriturismo/poster.webp"
+                  width={720}
+                  height={720}
+                  loading="lazy"
+                  decoding="async"
                   alt="Pranzo della Domenica a Villa Pensabene, Agriturismo in Città a Palermo"
                   className="relative z-10 w-full h-auto rounded-3xl shadow-2xl border border-white/10"
                 />
               </div>
               <div className="rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-                <LazyVideo src="/events/pranzo-domenica-agriturismo/promo.mp4" poster="/posters/promo.jpg" className="w-full h-auto bg-black" />
+                <LazyVideo aspect="16/9" src="/events/pranzo-domenica-agriturismo/promo.mp4" poster="/posters/promo.jpg" className="w-full h-auto bg-black" />
               </div>
             </div>
 
@@ -288,7 +292,7 @@ export function AboutSection() {
 
             {/* Giro Pasta Promotional Video */}
             <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-              <LazyVideo src="/giropasta.mp4" poster="/posters/giropasta.jpg" className="w-full h-auto bg-black" />
+              <LazyVideo aspect="4/5" src="/giropasta.mp4" poster="/posters/giropasta.jpg" className="w-full h-auto bg-black" />
             </div>
 
             <div className="grid lg:grid-cols-3 gap-12">
@@ -376,7 +380,7 @@ export function AboutSection() {
 
           {/* Events Promotional Video */}
           <div className="max-w-md mx-auto mb-16 rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-            <LazyVideo src="/eventi.mp4" poster="/posters/eventi.jpg" className="w-full h-auto bg-black" />
+            <LazyVideo aspect="4/5" src="/eventi.mp4" poster="/posters/eventi.jpg" className="w-full h-auto bg-black" />
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
@@ -439,7 +443,7 @@ export function AboutSection() {
 
             {/* Promo Video */}
             <div className="max-w-sm mx-auto mb-8 rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-              <LazyVideo src="/events/compleanni_bimbi/villa pesabene video compleanni pome_001.mp4" poster="/posters/compleanni.jpg" className="w-full h-auto bg-black" />
+              <LazyVideo aspect="16/9" src="/events/compleanni_bimbi/villa pesabene video compleanni pome_001.mp4" poster="/posters/compleanni.jpg" className="w-full h-auto bg-black" />
             </div>
 
             <div className="flex justify-center">

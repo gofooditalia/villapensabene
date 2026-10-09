@@ -17,6 +17,9 @@ export function HeroSection() {
           <img
             src="/icon.svg"
             alt="Villa Pensabene Logo"
+            width={192}
+            height={192}
+            fetchPriority="high"
             className="w-32 h-32 md:w-48 md:h-48 drop-shadow-2xl"
           />
         </div>
