@@ -103,10 +103,11 @@ export function Footer() {
               <li className="flex items-start gap-3 pt-2">
                 <Clock size={18} className="text-primary-foreground shrink-0 mt-0.5" />
                 <span className="opacity-80">
-                  Aperti tutti i giorni a cena
+                  Tutti i giorni a cena
+                  <br />
+                  Domenica anche a pranzo
                   <br />
                   Chiusura settimanale: lunedì
-                  <span className="block text-xs opacity-70">Orari autunnali in vigore dal 21 settembre</span>
                   <a
                     href="https://maps.app.goo.gl/99hroLSAfosUnoku6"
                     target="_blank"

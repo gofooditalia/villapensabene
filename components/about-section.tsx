@@ -170,7 +170,7 @@ export function AboutSection() {
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-bold mb-6 border border-accent/20">
                 <Sparkles size={16} />
-                <span>È Ufficiale — Si Torna Domenica 27 Settembre</span>
+                <span>Ogni Domenica a Pranzo</span>
               </div>
               <h3 className="font-serif text-3xl md:text-4xl font-bold text-accent mb-4">{"Agriturismo in Città! 🍷🌿"}</h3>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed italic">
@@ -184,7 +184,7 @@ export function AboutSection() {
                 <div className="absolute inset-0 bg-accent/20 blur-3xl rounded-full" />
                 <img
                   src="/events/pranzo-domenica-agriturismo/poster.png"
-                  alt="Torna il Pranzo della Domenica, Agriturismo in Città"
+                  alt="Pranzo della Domenica a Villa Pensabene, Agriturismo in Città a Palermo"
                   className="relative z-10 w-full h-auto rounded-3xl shadow-2xl border border-white/10"
                 />
               </div>
@@ -203,16 +203,16 @@ export function AboutSection() {
             </div>
 
             <p className="text-center text-accent font-bold uppercase tracking-widest text-sm mb-10">
-              Da Domenica 27 Settembre, e poi ogni Domenica
+              Ogni Domenica a pranzo — prenota il tuo tavolo
             </p>
 
             {/* Opening hours notice */}
             <div className="max-w-2xl mx-auto mb-16 flex items-start gap-4 bg-accent/10 border border-accent/30 rounded-2xl px-6 py-5">
               <Clock className="text-accent shrink-0 mt-0.5" size={22} />
               <div>
-                <p className="font-bold text-accent text-sm uppercase tracking-wider mb-1">Orari Autunnali — dal 21 Settembre</p>
+                <p className="font-bold text-accent text-sm uppercase tracking-wider mb-1">Orari di Apertura</p>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  {"Aperti tutti i giorni a cena, con chiusura settimanale il lunedì."}
+                  {"Aperti tutti i giorni a cena, la domenica anche a pranzo. Chiusura settimanale: lunedì."}
                 </p>
               </div>
             </div>

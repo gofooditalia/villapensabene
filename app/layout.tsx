@@ -12,16 +12,94 @@ export const viewport = {
   themeColor: "#8B2630",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
+}
+
+const SITE_URL = "https://www.villapensabene.it"
+
+// Dati strutturati per Google (Ristorante). Orari allineati alla scheda Google Business Profile.
+const restaurantJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Restaurant",
+  name: "Villa Pensabene - Ristorante Pizzeria",
+  url: SITE_URL,
+  image: `${SITE_URL}/dishes/villa_001.jpg`,
+  logo: `${SITE_URL}/logo.png`,
+  telephone: "+39 327 414 6546",
+  email: "villapensabeneristorante@gmail.com",
+  priceRange: "€€",
+  servesCuisine: ["Siciliana", "Pizza", "Pesce", "Carne alla griglia"],
+  menu: "https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria",
+  acceptsReservations: "True",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "Via P.40, 29",
+    addressLocality: "Palermo",
+    addressRegion: "PA",
+    postalCode: "90146",
+    addressCountry: "IT",
+  },
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "16:00",
+      closes: "00:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: "Sunday",
+      opens: "12:30",
+      closes: "00:00",
+    },
+  ],
+  // Variazioni temporanee: rimuovere dopo il 13 ottobre 2026
+  specialOpeningHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      validFrom: "2026-10-12",
+      validThrough: "2026-10-12",
+      opens: "16:00",
+      closes: "00:00",
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      validFrom: "2026-10-13",
+      validThrough: "2026-10-13",
+      opens: "00:00",
+      closes: "00:00",
+    },
+  ],
+  sameAs: [
+    "https://www.facebook.com/villapensabeneristorante/",
+    "https://www.instagram.com/villapensabene/",
+    "https://www.tiktok.com/@villa.pensabene.r",
+    "https://www.tripadvisor.it/Restaurant_Review-g187890-d3457272-Reviews-Villa_Pensabene_Ristorante_Pizzeria-Palermo_Province_of_Palermo_Sicily.html",
+  ],
 }
 
 
 export const metadata: Metadata = {
-  title: "Villa Pensabene - Ristorante Pizzeria",
+  metadataBase: new URL(SITE_URL),
+  title: "Villa Pensabene - Ristorante Pizzeria a Palermo | Cucina Siciliana",
   description:
-    "Autentica cucina italiana e pizzeria nel cuore della tradizione. Scopri i nostri piatti preparati con passione e ingredienti freschi.",
-  generator: "v0.app",
+    "Ristorante pizzeria a Palermo in Via P.40, alle spalle del Velodromo: cucina siciliana, pesce, carne alla griglia, Giro Pizza e Pranzo della Domenica. Aperti tutti i giorni a cena, chiusi il lunedì. Prenota su WhatsApp.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "it_IT",
+    url: SITE_URL,
+    siteName: "Villa Pensabene",
+    title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
+    description:
+      "Cucina siciliana, Giro Pizza, Giro Pasta e Pranzo della Domenica. Aperti tutti i giorni a cena, chiusi il lunedì.",
+    images: [{ url: "/dishes/villa_001.jpg", alt: "Un piatto di Villa Pensabene, Palermo" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
+    description: "Cucina siciliana, Giro Pizza e Pranzo della Domenica a Palermo.",
+    images: ["/dishes/villa_001.jpg"],
+  },
   icons: {
     icon: [
       {
@@ -66,6 +144,10 @@ export default function RootLayout({
   return (
     <html lang="it">
       <body className={`font-sans antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd) }}
+        />
         <SplashScreen />
         {children}
         <Analytics />

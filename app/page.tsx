@@ -5,6 +5,7 @@ import { MenuSection } from "@/components/menu-section"
 import { GallerySection } from "@/components/gallery-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
+import { AvvisoOrari } from "@/components/avviso-orari"
 
 export default function Page() {
   return (
@@ -16,6 +17,7 @@ export default function Page() {
       <GallerySection />
       <ContactSection />
       <Footer />
+      <AvvisoOrari />
     </main>
   )
 }
