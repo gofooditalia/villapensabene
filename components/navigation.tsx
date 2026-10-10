@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
+import { siteConfig } from "@/data/site.config"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,14 +31,7 @@ export function Navigation() {
     }
   }, [isOpen])
 
-  const navLinks = [
-    { name: "🎂 Compleanni Bimbi", href: "#compleanni-bimbi" },
-    { name: "🍂 Pranzo Domenica", href: "#pranzo-domenica" },
-    { name: "Proposta Gastronomica", href: "#about" },
-{ name: "Menu", href: "#menu" },
-    { name: "Galleria", href: "#gallery" },
-    { name: "Contatti", href: "#footer" },
-  ]
+  const navLinks = siteConfig.nav.map((link) => ({ name: link.label, href: link.href }))
 
   return (
     <>

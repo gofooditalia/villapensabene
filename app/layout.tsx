@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Geist, Playfair_Display } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import { siteConfig } from "@/data/site.config"
 
 const _geist = Geist({ subsets: ["latin"] })
 const _playfair = Playfair_Display({ subsets: ["latin"] })
@@ -13,91 +14,82 @@ export const viewport = {
   initialScale: 1,
 }
 
-const SITE_URL = "https://www.villapensabene.it"
+const SITE_URL = siteConfig.seo.siteUrl
 
-// Dati strutturati per Google (Ristorante). Orari allineati alla scheda Google Business Profile.
+const weekdayToJsonLd: Record<string, string> = {
+  monday: "Monday",
+  tuesday: "Tuesday",
+  wednesday: "Wednesday",
+  thursday: "Thursday",
+  friday: "Friday",
+  saturday: "Saturday",
+  sunday: "Sunday",
+}
+
+// Dati strutturati per Google (Ristorante). Orari generati da data/site.config.ts.
 const restaurantJsonLd = {
   "@context": "https://schema.org",
   "@type": "Restaurant",
-  name: "Villa Pensabene - Ristorante Pizzeria",
+  name: siteConfig.business.legalName,
   url: SITE_URL,
-  image: `${SITE_URL}/og-image.jpg`,
+  image: `${SITE_URL}${siteConfig.seo.ogImage}`,
   logo: `${SITE_URL}/logo.png`,
-  telephone: "+39 327 414 6546",
-  email: "villapensabeneristorante@gmail.com",
-  priceRange: "€€",
-  servesCuisine: ["Siciliana", "Pizza", "Pesce", "Carne alla griglia"],
-  menu: "https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria",
+  telephone: siteConfig.business.phone.replace(/^\+39/, "+39 "),
+  email: siteConfig.business.email,
+  priceRange: siteConfig.seo.priceRange,
+  servesCuisine: siteConfig.seo.cuisine,
+  menu: siteConfig.menu.fullMenuUrl,
   acceptsReservations: "True",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Via P.40, 29",
-    addressLocality: "Palermo",
-    addressRegion: "PA",
-    postalCode: "90146",
-    addressCountry: "IT",
+    streetAddress: siteConfig.business.address.street,
+    addressLocality: siteConfig.business.address.city,
+    addressRegion: siteConfig.business.address.region,
+    postalCode: siteConfig.business.address.postalCode,
+    addressCountry: siteConfig.business.address.country,
   },
-  openingHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: "16:00",
-      closes: "00:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: "Sunday",
-      opens: "12:30",
-      closes: "00:00",
-    },
-  ],
-  // Variazioni temporanee: rimuovere dopo il 13 ottobre 2026
-  specialOpeningHoursSpecification: [
-    {
-      "@type": "OpeningHoursSpecification",
-      validFrom: "2026-10-12",
-      validThrough: "2026-10-12",
-      opens: "16:00",
-      closes: "00:00",
-    },
-    {
-      "@type": "OpeningHoursSpecification",
-      validFrom: "2026-10-13",
-      validThrough: "2026-10-13",
-      opens: "00:00",
-      closes: "00:00",
-    },
-  ],
+  openingHoursSpecification: siteConfig.hours.regular.map((entry) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: entry.days.length === 1 ? weekdayToJsonLd[entry.days[0]] : entry.days.map((d) => weekdayToJsonLd[d]),
+    opens: entry.opens,
+    closes: entry.closes,
+  })),
+  // Variazioni temporanee: tenere sincronizzato con hours.notice in data/site.config.ts
+  specialOpeningHoursSpecification: siteConfig.hours.specialHours.map((entry) => ({
+    "@type": "OpeningHoursSpecification",
+    validFrom: entry.validFrom,
+    validThrough: entry.validThrough,
+    opens: entry.opens,
+    closes: entry.closes,
+  })),
   sameAs: [
-    "https://www.facebook.com/villapensabeneristorante/",
-    "https://www.instagram.com/villapensabene/",
-    "https://www.tiktok.com/@villa.pensabene.r",
-    "https://www.tripadvisor.it/Restaurant_Review-g187890-d3457272-Reviews-Villa_Pensabene_Ristorante_Pizzeria-Palermo_Province_of_Palermo_Sicily.html",
+    siteConfig.business.socials.facebook,
+    siteConfig.business.socials.instagram,
+    siteConfig.business.socials.tiktok,
+    siteConfig.business.socials.tripadvisor,
   ],
 }
 
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Villa Pensabene - Ristorante Pizzeria a Palermo | Cucina Siciliana",
-  description:
-    "Ristorante pizzeria a Palermo in Via P.40, alle spalle del Velodromo: cucina siciliana, pesce, carne alla griglia, Giro Pizza e Pranzo della Domenica. Aperti tutti i giorni a cena, chiusi il lunedì. Prenota su WhatsApp.",
+  title: siteConfig.seo.title,
+  description: siteConfig.seo.description,
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "it_IT",
     url: SITE_URL,
-    siteName: "Villa Pensabene",
-    title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
-    description:
-      "Cucina siciliana, Giro Pizza, Giro Pasta e Pranzo della Domenica. Aperti tutti i giorni a cena, chiusi il lunedì.",
-    images: [{ url: "/og-image.jpg", width: 1200, height: 630, alt: "Villa Pensabene - Ristorante Pizzeria a Palermo" }],
+    siteName: siteConfig.business.name,
+    title: siteConfig.seo.title,
+    description: siteConfig.seo.ogDescription,
+    images: [{ url: siteConfig.seo.ogImage, width: 1200, height: 630, alt: siteConfig.seo.ogImageAlt }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Villa Pensabene - Ristorante Pizzeria a Palermo",
-    description: "Cucina siciliana, Giro Pizza e Pranzo della Domenica a Palermo.",
-    images: ["/og-image.jpg"],
+    title: siteConfig.seo.title,
+    description: siteConfig.seo.twitterDescription,
+    images: [siteConfig.seo.ogImage],
   },
   icons: {
     icon: [

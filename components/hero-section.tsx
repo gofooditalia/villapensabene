@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { ChevronDown, BookOpen, Calendar } from "lucide-react"
 import { HeroVideo } from "@/components/hero-video"
+import { siteConfig } from "@/data/site.config"
 
 export function HeroSection() {
   return (
@@ -44,7 +45,7 @@ export function HeroSection() {
             asChild
           >
             <a
-              href="https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria"
+              href={siteConfig.menu.fullMenuUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Clock, Mail } from "lucide-react"
+import { siteConfig } from "@/data/site.config"
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -45,7 +46,7 @@ Telefono Cliente: ${phone}
 Allergie/Note: ${message || "Nessuna segnalazione"}`
 
     const encodedMessage = encodeURIComponent(whatsappMessage)
-    const whatsappUrl = `https://wa.me/393274146546?text=${encodedMessage}`
+    const whatsappUrl = `https://wa.me/${siteConfig.business.whatsappNumber}?text=${encodedMessage}`
 
     window.open(whatsappUrl, "_blank")
   }
@@ -120,12 +121,9 @@ Allergie/Note: ${message || "Nessuna segnalazione"}`
                   className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent bg-background text-foreground"
                 >
                   <option value="" disabled>Indica motivo della visita</option>
-                  <option value="Compleanno Bimbi nel Gazebo">🎂 Compleanno Bimbi nel Gazebo</option>
-                  <option value="Cena / Menù alla Carta">Cena / Menù alla Carta</option>
-                  <option value="Giro Pizza">Giro Pizza</option>
-                  <option value="Giro Pasta">Giro Pasta</option>
-                  <option value="Pranzo della Domenica (Agriturismo in città)">Pranzo della Domenica — Agriturismo in città</option>
-                  <option value="Evento Privato (Festa / Cerimonia)">Evento Privato (Festa / Cerimonia)</option>
+                  {siteConfig.reservationEventOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">

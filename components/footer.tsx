@@ -1,7 +1,10 @@
 import { Facebook, Instagram, Mail, Phone, MapPin, Clock } from "lucide-react"
 import Image from "next/image"
+import { siteConfig } from "@/data/site.config"
 
 export function Footer() {
+  const { business, menu, hours } = siteConfig
+
   return (
     <footer id="footer" className="bg-primary text-primary-foreground py-12">
       <div className="container mx-auto px-4">
@@ -22,7 +25,7 @@ export function Footer() {
 
             <div className="flex gap-4">
               <a
-                href="https://www.facebook.com/villapensabeneristorante/?locale=it_IT"
+                href={business.socials.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary-foreground/10 p-2.5 rounded-full hover:bg-gold hover:text-primary transition-all duration-300"
@@ -31,7 +34,7 @@ export function Footer() {
                 <Facebook size={20} />
               </a>
               <a
-                href="https://www.instagram.com/villapensabene/?hl=it"
+                href={business.socials.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary-foreground/10 p-2.5 rounded-full hover:bg-gold hover:text-primary transition-all duration-300"
@@ -40,7 +43,7 @@ export function Footer() {
                 <Instagram size={20} />
               </a>
               <a
-                href="https://www.tiktok.com/@villa.pensabene.r?_r=1&_t=ZN-93wzL2jmwcg"
+                href={business.socials.tiktok}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary-foreground/10 p-2.5 rounded-full hover:bg-gold hover:text-primary transition-all duration-300 flex items-center justify-center w-10 h-10"
@@ -51,7 +54,7 @@ export function Footer() {
                 </svg>
               </a>
               <a
-                href="https://www.tripadvisor.it/Restaurant_Review-g187890-d3457272-Reviews-Villa_Pensabene_Ristorante_Pizzeria-Palermo_Province_of_Palermo_Sicily.html"
+                href={business.socials.tripadvisor}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-primary-foreground/10 p-2.5 rounded-full hover:bg-gold hover:text-primary transition-all duration-300 flex items-center justify-center w-10 h-10"
@@ -72,7 +75,7 @@ export function Footer() {
             <h4 className="font-serif text-xl font-bold mb-6 text-primary-foreground">Link Utili</h4>
             <ul className="space-y-3 text-sm">
               <li><a href="#home" className="hover:text-gold transition-all">Home</a></li>
-              <li><a href="https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria" target="_blank" className="hover:text-gold transition-all">Il Menu</a></li>
+              <li><a href={menu.fullMenuUrl} target="_blank" className="hover:text-gold transition-all">Il Menu</a></li>
               <li><a href="#about" className="hover:text-gold transition-all">Chi Siamo</a></li>
               <li><a href="#gallery" className="hover:text-gold transition-all">Galleria</a></li>
               <li><a href="#prenota" className="hover:text-gold transition-all font-semibold">Prenota Tavolo</a></li>
@@ -86,30 +89,31 @@ export function Footer() {
               <li className="flex gap-3">
                 <MapPin size={20} className="text-primary-foreground shrink-0" />
                 <span className="opacity-80">
-                  Via P.40, 29<br />
-                  90146 Palermo PA, Italia
+                  {business.address.street}<br />
+                  {business.address.postalCode} {business.address.city} {business.address.region}, Italia
                   <br />
-                  <a href="https://maps.app.goo.gl/ErK4fypQzfVWmpL1A" target="_blank" className="text-gold hover:underline text-xs mt-1 block">Indicazioni Stradali →</a>
+                  <a href={business.directionsUrl} target="_blank" className="text-gold hover:underline text-xs mt-1 block">Indicazioni Stradali →</a>
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={18} className="text-primary-foreground shrink-0" />
-                <a href="tel:+393274146546" className="hover:text-gold transition-all opacity-80">327 414 6546</a>
+                <a href={`tel:${business.phone}`} className="hover:text-gold transition-all opacity-80">{business.phoneDisplay}</a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={18} className="text-primary-foreground shrink-0" />
-                <a href="mailto:villapensabeneristorante@gmail.com" className="hover:text-gold transition-all opacity-80">villapensabeneristorante@gmail.com</a>
+                <a href={`mailto:${business.email}`} className="hover:text-gold transition-all opacity-80">{business.email}</a>
               </li>
               <li className="flex items-start gap-3 pt-2">
                 <Clock size={18} className="text-primary-foreground shrink-0 mt-0.5" />
                 <span className="opacity-80">
-                  Tutti i giorni a cena
-                  <br />
-                  Domenica anche a pranzo
-                  <br />
-                  Chiusura settimanale: lunedì
+                  {hours.footerLines.map((line, i) => (
+                    <span key={i}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
                   <a
-                    href="https://maps.app.goo.gl/99hroLSAfosUnoku6"
+                    href={business.googleProfileUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gold hover:underline text-xs mt-1 block"
@@ -124,8 +128,8 @@ export function Footer() {
 
         <div className="border-t border-primary-foreground/20 pt-8 flex flex-col items-center gap-8 text-sm opacity-75">
           <div className="text-center">
-            <p>© 2026 Villa Pensabene Ristorante Pizzeria. Tutti i diritti riservati.</p>
-            <p className="mt-1 text-xs opacity-70">P.IVA IT06636480821</p>
+            <p>© 2026 {business.name}. Tutti i diritti riservati.</p>
+            <p className="mt-1 text-xs opacity-70">P.IVA {business.vatNumber}</p>
           </div>
 
           <div className="flex items-center gap-3 bg-primary-foreground/5 px-4 py-2 rounded-full border border-primary-foreground/10 transition-all hover:bg-primary-foreground/10 group">
