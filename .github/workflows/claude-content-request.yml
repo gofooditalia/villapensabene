@@ -1,0 +1,181 @@
+name: Claude Content Request
+
+# Pipeline del pilota "modifiche via WhatsApp" (vedi CLAUDE.md).
+#
+# Trigger: una issue aperta con la label "whatsapp-request". In produzione
+# sarà il webhook WhatsApp ad aprirla (titolo = riassunto breve, corpo =
+# testo/trascrizione del messaggio del cliente). Per ora va aperta a mano
+# per testare la pipeline end-to-end.
+#
+# Garanzia strutturale, non solo scritta in CLAUDE.md: Claude Code gira in
+# uno step che NON ha accesso a git/gh — può solo leggere il repo e
+# modificare data/site.config.ts. Un passo successivo, bash puro e
+# deterministico, verifica che il working tree sia toccato SOLO in quel
+# file prima di committare/pushare/aprire la PR. Se Claude ha toccato
+# qualunque altra cosa (o ha provato a crearne di nuove), il job fallisce
+# e non viene aperta nessuna PR.
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+
+concurrency:
+  group: claude-content-request-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  apply-content-change:
+    if: contains(github.event.issue.labels.*.name, 'whatsapp-request')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Installa dipendenze (per il typecheck di sicurezza)
+        run: pnpm install --frozen-lockfile
+
+      - name: Crea branch dedicato
+        id: branch
+        run: |
+          BRANCH="content/issue-${{ github.event.issue.number }}"
+          git checkout -b "$BRANCH"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Claude applica la richiesta (nessun accesso a git/gh)
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            Questa è una richiesta di modifica contenuto arrivata da un
+            cliente (ristoratore) via WhatsApp, registrata come issue
+            GitHub in questo repo.
+
+            Titolo issue: ${{ github.event.issue.title }}
+
+            Corpo issue (richiesta originale del cliente, testo o
+            trascrizione del vocale):
+            ${{ github.event.issue.body }}
+
+            Leggi PRIMA il file CLAUDE.md nella root del repo e segui
+            ESATTAMENTE le sue regole, senza eccezioni e senza
+            improvvisare oltre quello che dice.
+
+            Non hai accesso a git o gh in questo step: non provare a
+            usarli. Il tuo unico compito è decidere se e come modificare
+            data/site.config.ts, e scriverlo (un commit/PR lo fa uno step
+            successivo del workflow, non tu).
+
+            Caso A — richiesta chiara, permessa dalle regole di CLAUDE.md,
+            riguarda solo valori modificabili in data/site.config.ts:
+            applica la modifica in quel file. Non toccare nessun altro
+            file, non crearne di nuovi nel repo.
+
+            Caso B — richiesta ambigua, fuori dallo schema esistente,
+            o che tocca un campo vietato (telefono, WhatsApp, P.IVA):
+            NON modificare data/site.config.ts.
+
+            In ENTRAMBI i casi, scrivi alla fine un riassunto in italiano
+            in /tmp/claude-outcome.md (fuori dal repo, non tracciato da
+            git):
+            - Caso A: cosa hai cambiato e perché, pronto per essere usato
+              come descrizione della PR.
+            - Caso B: perché non hai proceduto e cosa serve (chiarimento
+              dal cliente via WhatsApp, o intervento di un dev), pronto
+              per essere usato come commento sull'issue.
+          claude_args: >-
+            --allowedTools "Read,Grep,Glob,Edit,MultiEdit,Write"
+
+      - name: Verifica che il diff tocchi SOLO data/site.config.ts
+        id: guard
+        run: |
+          CHANGED=$(git status --porcelain=v1 | awk '{print $2}')
+          if [ -z "$CHANGED" ]; then
+            echo "Nessuna modifica applicata da Claude."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [ "$CHANGED" != "data/site.config.ts" ]; then
+            echo "::error::Claude ha toccato file non permessi, PR NON aperta:"
+            echo "$CHANGED"
+            exit 1
+          fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Typecheck di sicurezza
+        if: steps.guard.outputs.changed == 'true'
+        run: pnpm exec tsc --noEmit
+
+      - name: Leggi il riassunto scritto da Claude
+        id: outcome
+        run: |
+          DELIM="CLAUDE_OUTCOME_$(openssl rand -hex 8)"
+          {
+            echo "body<<${DELIM}"
+            if [ -f /tmp/claude-outcome.md ]; then
+              cat /tmp/claude-outcome.md
+            else
+              echo "Claude non ha fornito una spiegazione scritta per questa richiesta."
+            fi
+            echo "${DELIM}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Commit, push e apri la PR
+        if: steps.guard.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_BODY: ${{ steps.outcome.outputs.body }}
+          # Il titolo dell'issue è testo non fidato (in produzione arriva da
+          # un messaggio WhatsApp): passarlo via env ed espanderlo come
+          # variabile bash ($ISSUE_TITLE), non interpolarlo direttamente nello
+          # script, evita che caratteri come backtick o $(...) vengano
+          # eseguiti come shell invece di essere trattati come testo.
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.email "claude[bot]@users.noreply.github.com"
+          git config user.name "claude[bot]"
+          git add data/site.config.ts
+          git commit -m "content: richiesta da issue #${ISSUE_NUMBER}" -m "$ISSUE_TITLE"
+          git push origin "${{ steps.branch.outputs.branch }}"
+          {
+            echo "$PR_BODY"
+            echo ""
+            echo "---"
+            echo "Richiesta originale: issue #${ISSUE_NUMBER}"
+            echo ""
+            echo "Closes #${ISSUE_NUMBER}"
+          } > /tmp/pr-body.md
+          gh pr create \
+            --title "Contenuto: $ISSUE_TITLE" \
+            --body-file /tmp/pr-body.md \
+            --base main \
+            --head "${{ steps.branch.outputs.branch }}"
+          gh issue comment "${ISSUE_NUMBER}" \
+            --body "Ho aperto una PR con la modifica proposta — in attesa di approvazione prima del merge."
+
+      - name: "Nessuna modifica applicata: commenta sull'issue"
+        if: steps.guard.outputs.changed == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMMENT_BODY: ${{ steps.outcome.outputs.body }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" --body "$COMMENT_BODY"

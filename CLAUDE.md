@@ -8,6 +8,12 @@ PR, il titolare approva via WhatsApp, viene fatto il merge.
 le richieste del cliente deve poter cambiare SOLO `data/site.config.ts`, mai
 layout o logica.
 
+> Questo file viene letto automaticamente dalla pipeline in
+> `.github/workflows/claude-content-request.yml`, che apre una issue →
+> applica la modifica in questo file → PR. Vedi quel file per i dettagli
+> tecnici (come viene fatto rispettare "solo data/site.config.ts" a livello
+> di workflow, non solo di istruzioni).
+
 > Stato (ottobre 2026): la migrazione è FATTA. Tutti i contenuti (orari,
 > contatti, menu, promozioni, nav, SEO) vivono in `data/site.config.ts` e i
 > componenti in `components/**`/`app/**` leggono da lì. Non esistono più
