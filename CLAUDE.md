@@ -13,6 +13,10 @@ layout o logica.
 > applica la modifica in questo file → PR. Vedi quel file per i dettagli
 > tecnici (come viene fatto rispettare "solo data/site.config.ts" a livello
 > di workflow, non solo di istruzioni).
+>
+> `app/api/whatsapp-webhook/route.ts` è il webhook che riceve i messaggi del
+> titolare e apre le issue con label `whatsapp-request`: è infrastruttura,
+> non contenuto, già coperto dal divieto generale su `app/**` sotto.
 
 > Stato (ottobre 2026): la migrazione è FATTA. Tutti i contenuti (orari,
 > contatti, menu, promozioni, nav, SEO) vivono in `data/site.config.ts` e i
