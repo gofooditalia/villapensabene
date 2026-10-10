@@ -22,6 +22,7 @@ export interface SpecialHours {
 }
 
 export interface HoursNotice {
+  id: string
   title: string
   message: string
   until: string // ISO datetime con offset Roma; il banner si nasconde da solo dopo questa data
@@ -32,11 +33,16 @@ export interface Hours {
   closedWeekday: Weekday
   summaryText: string
   footerLines: string[]
-  // Variazioni per Google (JSON-LD). Aggiornare insieme a `notice` quando si
+  // Variazioni per Google (JSON-LD). Aggiornare insieme a `notices` quando si
   // comunica una variazione temporanea: non sono generate l'una dall'altra.
   specialHours: SpecialHours[]
-  // Banner visibile sul sito. null = nessun avviso attivo.
-  notice: HoursNotice | null
+  // Banner visibili sul sito, impilati. Più avvisi possono coesistere: per
+  // aggiungerne uno nuovo, AGGIUNGI una entry con un id nuovo, non
+  // sovrascrivere quelle esistenti (potrebbero riguardare un'altra data e
+  // non essere ancora scadute). Ogni avviso si nasconde da solo dopo `until`
+  // — non serve rimuoverlo manualmente quando scade, ma è pulito togliere
+  // quelli ormai scaduti da tempo in una PR successiva.
+  notices: HoursNotice[]
 }
 
 export interface Business {
@@ -111,6 +117,12 @@ export interface GiroPasta {
 export interface FeatureItem {
   id: string
   title: string
+  // Se presente, questo elemento sparisce automaticamente quando la promo
+  // con questo id ha active:false (vedi isPromoActive in lib/site-helpers.ts).
+  // Usalo SOLO quando l'elemento rappresenta letteralmente quella promo
+  // (es. il chip "Giro Pasta - 20€" sotto Pranzo Domenica); le voci generiche
+  // (es. le icone "specialties") restano indipendenti di proposito.
+  relatedPromoId?: string
 }
 
 export interface SeasonalFeature {
@@ -142,6 +154,10 @@ export interface MenuCategory {
 export interface ReservationEventOption {
   value: string
   label: string
+  // Stesso meccanismo di FeatureItem.relatedPromoId: se la promo collegata
+  // ha active:false, questa opzione sparisce dal form di prenotazione.
+  // Non tutte le opzioni hanno (o devono avere) una promo collegata.
+  relatedPromoId?: string
 }
 
 export interface NavLink {
@@ -220,12 +236,15 @@ export const siteConfig: SiteConfig = {
       { id: "2026-10-12", validFrom: "2026-10-12", validThrough: "2026-10-12", opens: "16:00", closes: "00:00" },
       { id: "2026-10-13", validFrom: "2026-10-13", validThrough: "2026-10-13", opens: "00:00", closes: "00:00" },
     ],
-    notice: {
-      title: "Variazione orari questa settimana",
-      message:
-        "Lunedì 12 ottobre siamo APERTI a cena · Martedì 13 ottobre CHIUSI per manutenzione straordinaria.",
-      until: "2026-10-14T00:00:00+02:00",
-    },
+    notices: [
+      {
+        id: "2026-10-12-13",
+        title: "Variazione orari questa settimana",
+        message:
+          "Lunedì 12 ottobre siamo APERTI a cena · Martedì 13 ottobre CHIUSI per manutenzione straordinaria.",
+        until: "2026-10-14T00:00:00+02:00",
+      },
+    ],
   },
 
   sections: [
@@ -365,7 +384,7 @@ export const siteConfig: SiteConfig = {
   },
 
   quickFeatures: [
-    { id: "giro-pasta-price", title: "Giro Pasta - 20€" },
+    { id: "giro-pasta-price", title: "Giro Pasta - 20€", relatedPromoId: "giro-pasta" },
     { id: "area-giochi", title: "Area Giochi Bimbi" },
     { id: "menu-carta", title: "Menu alla Carta" },
   ],
@@ -651,11 +670,11 @@ export const siteConfig: SiteConfig = {
   },
 
   reservationEventOptions: [
-    { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo" },
+    { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo", relatedPromoId: "compleanni-gazebo" },
     { value: "Cena / Menù alla Carta", label: "Cena / Menù alla Carta" },
-    { value: "Giro Pizza", label: "Giro Pizza" },
-    { value: "Giro Pasta", label: "Giro Pasta" },
-    { value: "Pranzo della Domenica (Agriturismo in città)", label: "Pranzo della Domenica — Agriturismo in città" },
+    { value: "Giro Pizza", label: "Giro Pizza", relatedPromoId: "giro-pizza" },
+    { value: "Giro Pasta", label: "Giro Pasta", relatedPromoId: "giro-pasta" },
+    { value: "Pranzo della Domenica (Agriturismo in città)", label: "Pranzo della Domenica — Agriturismo in città", relatedPromoId: "pranzo-domenica" },
     { value: "Evento Privato (Festa / Cerimonia)", label: "Evento Privato (Festa / Cerimonia)" },
   ],
 

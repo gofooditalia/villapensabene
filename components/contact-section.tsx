@@ -5,8 +5,13 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Clock, Mail } from "lucide-react"
 import { siteConfig } from "@/data/site.config"
+import { isPromoActive } from "@/lib/site-helpers"
 
 export function ContactSection() {
+  const visibleEventOptions = siteConfig.reservationEventOptions.filter(
+    (option) => !option.relatedPromoId || isPromoActive(siteConfig, option.relatedPromoId)
+  )
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -121,7 +126,7 @@ Allergie/Note: ${message || "Nessuna segnalazione"}`
                   className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent bg-background text-foreground"
                 >
                   <option value="" disabled>Indica motivo della visita</option>
-                  {siteConfig.reservationEventOptions.map((option) => (
+                  {visibleEventOptions.map((option) => (
                     <option key={option.value} value={option.value}>{option.label}</option>
                   ))}
                 </select>

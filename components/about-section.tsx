@@ -5,6 +5,7 @@ import { LazyVideo } from "@/components/lazy-video"
 import { Card } from "@/components/ui/card"
 import { Utensils, Waves, TreePine, Baby, Clock, ScrollText, Sparkles, PartyPopper, Cake, Wine, Phone } from "lucide-react"
 import { siteConfig } from "@/data/site.config"
+import { isPromoActive } from "@/lib/site-helpers"
 
 // Icone per gli elementi definiti in data/site.config.ts. Le icone sono
 // layout (JSX), non contenuto: l'agente di modifica non tocca questo file,
@@ -329,7 +330,9 @@ export function AboutSection() {
 
               {/* Sunday Quick features */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {siteConfig.quickFeatures.map((item) => (
+                {siteConfig.quickFeatures
+                  .filter((item) => !item.relatedPromoId || isPromoActive(siteConfig, item.relatedPromoId))
+                  .map((item) => (
                   <div key={item.id} className="flex items-center gap-3 p-4 bg-secondary/20 rounded-xl border border-white/5">
                     {quickFeatureIcons[item.id]}
                     <span className="text-xs font-bold uppercase tracking-tight">{item.title}</span>

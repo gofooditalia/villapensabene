@@ -54,11 +54,14 @@ layout o logica.
      `validFrom`/`validThrough` (stesso giorno se è un solo giorno),
      `opens`/`closes` (usa `"00:00"`/`"00:00"` per "chiuso tutto il giorno").
      Questo alimenta il JSON-LD per Google.
-   - `hours.notice`: il banner visibile sul sito. `title`, `message` (testo
-     naturale che riassume la variazione) e `until` (ISO con offset Roma,
-     es. `+02:00` in estate / `+01:00` in inverno) — dopo quella data il
-     banner si nasconde da solo. Imposta `notice: null` per togliere il
-     banner prima della scadenza.
+   - `hours.notices`: un ARRAY di banner visibili sul sito, impilati — più
+     avvisi possono coesistere. Per una nuova variazione **aggiungi** una
+     entry con un `id` nuovo (es. la data), non sovrascrivere le entry
+     esistenti: potrebbero riguardare un'altra data e non essere ancora
+     scadute (ogni avviso si nasconde da solo dopo il proprio `until`, non
+     serve toglierlo a mano). Campi: `id`, `title`, `message` (testo
+     naturale che riassume la variazione), `until` (ISO con offset Roma,
+     es. `+02:00` in estate / `+01:00` in inverno).
    Se dimentichi uno dei due, il sito e la scheda Google diranno cose
    diverse — è esattamente il tipo di drift che questa migrazione elimina,
    quindi è un errore grave in una PR, non un dettaglio.
@@ -74,6 +77,17 @@ layout o logica.
    riscrivere il contenuto da zero (nel repo, prima della migrazione, ogni
    promo stagionale veniva aggiunta e rimossa a mano via commit — è
    esattamente quello che `active` evita).
+
+   Non serve fare altro: `quickFeatures` e `reservationEventOptions` che
+   referenziano quella promo/sezione tramite `relatedPromoId` (es. il chip
+   "Giro Pasta - 20€", l'opzione "Giro Pasta" nel form) **spariscono da
+   soli** — la logica è in `lib/site-helpers.ts` (`isPromoActive`), non
+   serve ricordarsi di aggiornarli a mano in più punti. Se aggiungi una
+   NUOVA voce in `quickFeatures` o `reservationEventOptions` che rappresenta
+   letteralmente una promo/sezione esistente, imposta il suo
+   `relatedPromoId` sull'id di quella promo/sezione; se è generica (es.
+   "Cena / Menù alla Carta", "Area Giochi Bimbi") lascia `relatedPromoId`
+   assente, resta sempre visibile.
 5. **Nuovo piatto, nuovo prezzo, nuova voce di menu**: modifica
    `menu.categories` direttamente. Il prezzo resta una stringa già formattata
    (es. `"€9.50"`, `"€5.00/etto"`, `"€20.00/€32.00"` per un range) — rispetta

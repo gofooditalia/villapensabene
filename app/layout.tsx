@@ -54,7 +54,7 @@ const restaurantJsonLd = {
     opens: entry.opens,
     closes: entry.closes,
   })),
-  // Variazioni temporanee: tenere sincronizzato con hours.notice in data/site.config.ts
+  // Variazioni temporanee: tenere sincronizzato con hours.notices in data/site.config.ts
   specialOpeningHoursSpecification: siteConfig.hours.specialHours.map((entry) => ({
     "@type": "OpeningHoursSpecification",
     validFrom: entry.validFrom,
