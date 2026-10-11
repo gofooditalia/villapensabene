@@ -430,7 +430,7 @@ export const siteConfig: SiteConfig = {
       {
         title: "Gli Antipasti",
         items: [
-          { name: "Patatine fresche fritte", price: "€4.00" },
+          { name: "Patatine sbrodolose e fritte", price: "€4.00" },
           { name: "Bruschetta classica", price: "€5.00", description: "Pomodoro, Olio, Sale, Pepe, Origano" },
           {
             name: "Antipasto Caldo",
