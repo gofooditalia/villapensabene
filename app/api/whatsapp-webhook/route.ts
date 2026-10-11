@@ -6,10 +6,10 @@ import crypto from "node:crypto"
 // label "whatsapp-request" sul repo di questo stesso sito — da lì parte
 // .github/workflows/claude-content-request.yml (vedi CLAUDE.md).
 //
-// Riceve messaggi SOLO dal numero in WHATSAPP_OWNER_PHONE (confronto
-// sull'ultimo pezzo del wa_id, ignorando differenze di formattazione).
-// Qualsiasi altro mittente viene ignorato silenziosamente (200 OK comunque:
-// Meta si aspetta sempre un 200 rapido, altrimenti ritenta e/o disattiva il
+// Riceve messaggi SOLO dai numeri in WHATSAPP_OWNER_PHONES (whitelist,
+// confronto normalizzato — ignora spazi/trattini/parentesi). Qualsiasi
+// altro mittente viene ignorato silenziosamente (200 OK comunque: Meta si
+// aspetta sempre un 200 rapido, altrimenti ritenta e/o disattiva il
 // webhook).
 //
 // Variabili d'ambiente richieste (da impostare su Vercel):
@@ -20,8 +20,9 @@ import crypto from "node:crypto"
 // - WHATSAPP_ACCESS_TOKEN   token per chiamare la Graph API (rispondere,
 //                           scaricare i vocali)
 // - WHATSAPP_PHONE_NUMBER_ID  id del numero business da cui rispondere
-// - WHATSAPP_OWNER_PHONE    numero del titolare autorizzato a fare richieste
-//                           (whitelist a una sola voce per questo pilota)
+// - WHATSAPP_OWNER_PHONES   numeri autorizzati a fare richieste, separati
+//                           da virgola (es. "+393331234567,+393339876543")
+//                           — qualunque formato va bene, viene normalizzato
 // - OPENAI_API_KEY          per la trascrizione dei vocali (Whisper)
 // - GH_WEBHOOK_TOKEN        token GitHub (PAT) con permesso di creare issue
 //                           su gofooditalia/villapensabene
@@ -112,9 +113,17 @@ export async function POST(req: NextRequest) {
   return new NextResponse("OK", { status: 200 })
 }
 
+function getAuthorizedPhones(): string[] {
+  const raw = process.env.WHATSAPP_OWNER_PHONES ?? ""
+  return raw
+    .split(",")
+    .map((p) => normalizePhone(p))
+    .filter((p) => p.length > 0)
+}
+
 async function handleIncomingMessage(message: WhatsAppMessage) {
-  const ownerPhone = process.env.WHATSAPP_OWNER_PHONE
-  if (!ownerPhone || normalizePhone(message.from) !== normalizePhone(ownerPhone)) {
+  const authorizedPhones = getAuthorizedPhones()
+  if (authorizedPhones.length === 0 || !authorizedPhones.includes(normalizePhone(message.from))) {
     console.warn(`[whatsapp-webhook] messaggio ignorato da numero non autorizzato: ${message.from}`)
     return
   }
