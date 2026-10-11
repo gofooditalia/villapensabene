@@ -2,7 +2,14 @@
 
 Questo repo è il pilota di un sistema che permette al cliente (ristoratore) di
 chiedere modifiche al sito via messaggio o vocale WhatsApp. Un agente apre una
-PR, il titolare approva via WhatsApp, viene fatto il merge.
+PR e, se passa i controlli automatici, la mergia da solo — **nessuna
+revisione umana prima della pubblicazione** (scelta esplicita del titolare:
+l'automazione totale è il punto del sistema). Il titolare riceve solo una
+notifica finale su WhatsApp quando la modifica è già online.
+
+Proprio perché non c'è un umano che guarda prima della pubblicazione, le
+regole sotto — in particolare quali campi sono vietati e cosa fare nei casi
+ambigui — sono l'UNICA rete di sicurezza reale. Seguile alla lettera.
 
 **Principio cardine: contenuti e codice sono separati.** L'agente che esegue
 le richieste del cliente deve poter cambiare SOLO `data/site.config.ts`, mai
@@ -109,9 +116,11 @@ layout o logica.
    una struttura. Apri la PR/issue con la richiesta originale e una nota
    "richiede modifica di schema/layout, serve un dev", e fermati lì.
 7. **Richiesta ambigua** (es. "cambia gli orari" senza dire quali) → non
-   indovinare. La PR deve contenere una domanda di chiarimento per il
-   titolare, oppure il chiarimento va richiesto via WhatsApp prima di aprire
-   la PR.
+   indovinare, non toccare `data/site.config.ts`. Il workflow manda al
+   cliente, su WhatsApp, un messaggio BREVE e semplicissimo (zero gergo
+   tecnico, zero menzioni di GitHub/issue/PR) che chiede di riformulare —
+   è l'unico momento in cui il cliente "vede" l'esito, quindi il tono deve
+   essere comprensibile da chiunque, mai un'analisi tecnica.
 
 ## Formato e validazione
 
@@ -136,18 +145,22 @@ layout o logica.
 
 ## Ogni PR generata dall'agente deve
 
-- Toccare solo `data/site.config.ts`.
+- Toccare solo `data/site.config.ts` — verificato da uno step del workflow
+  che NON usa l'IA (bash puro): se fallisce, niente commit/push/PR/merge.
 - Avere nel titolo/descrizione la richiesta originale del cliente (testo o
-  trascrizione del vocale) e il numero WhatsApp/issue di origine, per
-  tracciabilità.
+  trascrizione del vocale) e il numero dell'issue di origine, per
+  tracciabilità — ma questa descrizione la legge solo chi guarda la
+  cronologia Git, mai il cliente.
 - Essere piccola e isolata: una richiesta cliente = una PR. Non accorpare
   richieste diverse arrivate in momenti diversi.
-- Includere un link alla preview Vercel generata automaticamente sulla PR,
-  così l'approvazione via WhatsApp si basa su qualcosa di visto, non sul
-  diff grezzo.
-- Passare `npx tsc --noEmit` prima di essere proposta: se il tipo non torna
-  (es. hai scritto un numero dove serve una stringa, o hai rotto la forma di
-  un array), il tipo in testa a `site.config.ts` lo intercetta subito.
+- Passare `npx tsc --noEmit` prima di essere mergiata: è l'ultimo controllo
+  automatico prima della pubblicazione, dato che non c'è revisione umana.
+- Essere mergiata subito dal workflow stesso (squash + delete branch) non
+  appena i controlli passano — non aspetta un'approvazione.
+
+Il titolare viene avvisato su WhatsApp SOLO a modifica già pubblicata
+("✅ Fatto! La tua modifica è online: ..."), con un messaggio fisso scritto
+nel workflow stesso, non generato da Claude.
 
 ## Note sul menu
 

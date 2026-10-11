@@ -135,10 +135,10 @@ async function handleIncomingMessage(message: WhatsAppMessage) {
     return
   }
 
-  const issueUrl = await createGithubIssue(requestText)
+  await createGithubIssue(requestText, message.from)
   await sendWhatsAppReply(
     message.from,
-    `Ricevuto! Ho aperto una richiesta: ${issueUrl}\nTi avviso qui appena la modifica è pronta da approvare.`
+    "Ricevuto! ✅ Ci sto lavorando, ti avviso appena è pronta 🙂"
   )
 }
 
@@ -190,11 +190,16 @@ async function transcribeVoiceNote(mediaId: string): Promise<string | null> {
   return result.text ?? null
 }
 
-async function createGithubIssue(requestText: string): Promise<string> {
+async function createGithubIssue(requestText: string, senderPhone: string): Promise<string> {
   const token = process.env.GH_WEBHOOK_TOKEN
   if (!token) throw new Error("GH_WEBHOOK_TOKEN mancante")
 
   const title = requestText.length > 70 ? `${requestText.slice(0, 67)}...` : requestText
+
+  // Il numero del mittente va in una label (non nel corpo): la GitHub Action
+  // lo legge da lì per rispondere su WhatsApp a fine lavoro, senza che
+  // finisca nel testo che Claude interpreta come richiesta del cliente.
+  const senderLabel = `wa-sender-${normalizePhone(senderPhone)}`
 
   const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
     method: "POST",
@@ -206,7 +211,7 @@ async function createGithubIssue(requestText: string): Promise<string> {
     body: JSON.stringify({
       title,
       body: requestText,
-      labels: ["whatsapp-request"],
+      labels: ["whatsapp-request", senderLabel],
     }),
   })
 
