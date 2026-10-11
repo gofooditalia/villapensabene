@@ -261,7 +261,7 @@ export const siteConfig: SiteConfig = {
       kicker: "Serata Pizza",
       title: 'I nostri "Giro Pizza" 🍕',
       description:
-        "Scegli la formula perfetta per la tua serata in compagnia. Pizze a lievitazione naturale a volontà e tutto il gusto della tradizione.",
+        "Scegli la formula perfetta per la tua serata in compagnia. Pizze a lievitazione naturale cotte a legna a volontà e tutto il gusto della tradizione.",
       video: "/giropizza.mp4",
       poster: "/posters/giropizza.jpg",
       active: true,
