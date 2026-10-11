@@ -223,6 +223,12 @@ jobs:
             --base main \
             --head "${{ steps.branch.outputs.branch }}"
           gh pr merge "${{ steps.branch.outputs.branch }}" --squash --delete-branch
+          # "Closes #N" nel corpo della PR non chiude sempre l'issue in modo
+          # affidabile quando il merge lo fa il bot delle Actions (osservato
+          # empiricamente: funziona se il merge lo fa un utente reale, non
+          # sempre se lo fa github-actions[bot]) — chiudiamo esplicitamente
+          # invece di fidarci della sola parola magica.
+          gh issue close "${ISSUE_NUMBER}"
 
       - name: Notifica WhatsApp - modifica pubblicata
         if: steps.guard.outputs.changed == 'true' && steps.sender.outputs.phone != ''
