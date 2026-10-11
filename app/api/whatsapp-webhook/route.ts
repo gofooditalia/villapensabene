@@ -72,9 +72,17 @@ interface WhatsAppMessage {
 
 export async function POST(req: NextRequest) {
   const rawBody = await req.text()
+  console.log("[whatsapp-webhook] richiesta POST ricevuta, lunghezza body:", rawBody.length)
 
   const appSecret = process.env.WHATSAPP_APP_SECRET
-  if (!appSecret || !verifySignature(rawBody, req.headers.get("x-hub-signature-256"), appSecret)) {
+  const signatureHeader = req.headers.get("x-hub-signature-256")
+  if (!appSecret || !verifySignature(rawBody, signatureHeader, appSecret)) {
+    console.error(
+      "[whatsapp-webhook] firma non valida.",
+      "appSecret presente:", !!appSecret,
+      "header presente:", !!signatureHeader,
+      "lunghezza rawBody:", rawBody.length
+    )
     return new NextResponse("Invalid signature", { status: 401 })
   }
 
