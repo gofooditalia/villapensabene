@@ -553,7 +553,7 @@ export const siteConfig: SiteConfig = {
         items: [
           { name: "Biancaneve", price: "€7.00", description: "Fiordilatte" },
           { name: "Margherita", price: "€8.50", description: "Polpa di Pomodoro, Fiordilatte, Basilico Fresco" },
-          { name: "Napoli", price: "€8.99", description: "Polpa di Pomodoro, Fiordilatte, Filetti di Acciughe, Origano" },
+          { name: "Napoli", price: "€8.00", description: "Polpa di Pomodoro, Fiordilatte, Filetti di Acciughe, Origano" },
           { name: "Bruschetta", price: "€8.00", description: "Cubetti di Pomodoro, Basilico, Scaglie di Parmigiano" },
           { name: "America", price: "€9.00", description: "Polpa di Pomodoro, Fiordilatte, Patatine Fritte, Wurstel, Salsa BBQ" },
           {
