@@ -607,7 +607,7 @@ export const siteConfig: SiteConfig = {
       {
         title: "Pizze Stracciatellose",
         items: [
-          { name: "Bresaola", price: "€14.00", description: "Stracciatella, Bresaola, Noci, Scaglie di Grana" },
+          { name: "Bresaola", price: "€12.00", description: "Stracciatella, Bresaola, Noci, Scaglie di Grana" },
           { name: "Calzone Farcito", price: "€14.00", description: "Crema Porcini, Bufala DOP, Prosciutto Crudo, Stracciatella, Pistacchio" },
           { name: "Parmense", price: "€12.00", description: "Polpa di Pomodoro, Pomodorini, Prosciutto Crudo di Parma, Stracciatella, Rucola" },
           { name: "Preziosa", price: "€13.00", description: "Polpa di Pomodoro, Bufala DOP, Stracciatella, Crudo, Granella di Pistacchio" },
