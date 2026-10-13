@@ -552,7 +552,7 @@ export const siteConfig: SiteConfig = {
         title: "Pizze Classiche",
         items: [
           { name: "Biancaneve", price: "€7.00", description: "Fiordilatte" },
-          { name: "Margherita", price: "€12.50", description: "Polpa di Pomodoro, Fiordilatte, Basilico Fresco" },
+          { name: "Margherita", price: "€8.00", description: "Polpa di Pomodoro, Fiordilatte, Basilico Fresco" },
           { name: "Napoli", price: "€8.00", description: "Polpa di Pomodoro, Fiordilatte, Filetti di Acciughe, Origano" },
           { name: "Bruschetta", price: "€8.00", description: "Cubetti di Pomodoro, Basilico, Scaglie di Parmigiano" },
           { name: "America", price: "€9.00", description: "Polpa di Pomodoro, Fiordilatte, Patatine Fritte, Wurstel, Salsa BBQ" },
