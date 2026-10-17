@@ -590,7 +590,7 @@ export const siteConfig: SiteConfig = {
       {
         title: "Pizze Bufalose",
         items: [
-          { name: "Ai Frati", price: "€13.00", description: "Mozzarella di Bufala, Radicchio, Mascarpone, Gorgonzola, Speck, Noci" },
+          { name: "Ai Frati", price: "€14.50", description: "Mozzarella di Bufala, Radicchio, Mascarpone, Gorgonzola, Speck, Noci" },
           { name: "Andrea", price: "€13.00", description: "Mozzarella di Bufala, Pomodorini, Mascarpone, Crudo, Scaglie di Grana" },
           { name: "Brontese", price: "€13.00", description: "Mozzarella di Bufala DOP, Pomodoro Datterino, Speck, Pesto di Pistacchio" },
           { name: "Bufalina", price: "€11.00", description: "Polpa di Pomodoro, Mozzarella di Bufala DOP, Pomodorini, Basilico" },
