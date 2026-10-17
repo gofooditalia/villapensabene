@@ -6,7 +6,7 @@ export function Footer() {
   const { business, menu, hours } = siteConfig
 
   return (
-    <footer id="footer" className="bg-primary text-primary-foreground py-12">
+    <footer id="footer" className="bg-primary text-primary-foreground pt-12 pb-4">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand Info */}
@@ -131,26 +131,26 @@ export function Footer() {
             <p>© 2026 {business.name}. Tutti i diritti riservati.</p>
             <p className="mt-1 text-xs opacity-70">P.IVA {business.vatNumber}</p>
           </div>
-
-          <div className="flex items-center gap-3 bg-primary-foreground/5 px-4 py-2 rounded-full border border-primary-foreground/10 transition-all hover:bg-primary-foreground/10 group">
-            <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Sviluppato da</span>
-            <a
-              href="https://gofoodmenu.it/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2"
-            >
-              <Image
-                src="/credits/icon.svg"
-                alt="GO!Food Italia"
-                width={80}
-                height={24}
-                className="h-5 w-auto brightness-0 invert opacity-80 group-hover:opacity-100 transition-opacity"
-              />
-            </a>
-          </div>
         </div>
 
+        <div className="mt-8 pt-3 border-t border-primary-foreground/10 flex justify-center">
+          <a
+            href="https://gofood.it"
+            target="_blank"
+            rel="noopener"
+            title="GO!Food Italia – software e siti web a Palermo"
+            className="flex items-center gap-1 text-[10px] text-primary-foreground/40 hover:text-primary-foreground/80 transition-colors"
+          >
+            <span className="whitespace-nowrap">Sito realizzato da</span>
+            <Image
+              src="/credits/gofood.svg"
+              alt="GO!Food Italia"
+              width={26}
+              height={20}
+              className="h-5 w-auto shrink-0 opacity-80"
+            />
+          </a>
+        </div>
       </div>
     </footer>
   )
