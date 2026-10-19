@@ -154,6 +154,16 @@ jobs:
             in modo più semplice? Es: 'cambia il prezzo della Margherita
             a 9 euro'". Nel Caso A non serve: il messaggio di successo lo
             manda il workflow con un testo fisso.
+
+            Se il messaggio NON è una richiesta di modifica ma un saluto
+            o una domanda su cosa sai fare (es. "ciao", "sei operativo?",
+            "cosa sai fare?"), il messaggio per il cliente non deve dire
+            "non ho capito": deve presentarti come l'assistente che aiuta
+            a modificare il sito villapensabene.it, citando SEMPRE
+            esplicitamente "villapensabene.it", con 1-2 esempi concreti
+            di richieste. Esempio di tono: "Ciao! 👋 Ti aiuto a cambiare
+            il sito villapensabene.it: prezzi, piatti, orari, avvisi.
+            Scrivimi o mandami un vocale, es: 'domenica siamo chiusi'".
           claude_args: >-
             --allowedTools "Read,Grep,Glob,Edit,MultiEdit,Write"
 
@@ -197,7 +207,7 @@ jobs:
             if [ -f /tmp/claude-whatsapp-message.md ]; then
               cat /tmp/claude-whatsapp-message.md
             else
-              echo "Non sono riuscito a capire bene la richiesta 🤔 Puoi riscrivermela in modo più semplice?"
+              echo "Non sono riuscito a capire bene la richiesta per il sito villapensabene.it 🤔 Puoi riscrivermela in modo più semplice?"
             fi
             echo "${DELIM2}"
           } >> "$GITHUB_OUTPUT"

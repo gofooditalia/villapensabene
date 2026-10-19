@@ -95,7 +95,7 @@ async function handleIncomingMessage(message: TelegramMessage) {
   if (message.text?.startsWith("/start")) {
     await sendTelegramReply(
       chatId,
-      "Ciao! 👋 Scrivimi o mandami un vocale con la modifica che vuoi sul sito. Es: 'cambia il prezzo della Margherita a 9 euro'"
+      "Ciao! 👋 Ti aiuto a cambiare il sito villapensabene.it. Scrivimi o mandami un vocale con la modifica che vuoi. Es: 'cambia il prezzo della Margherita a 9 euro'"
     )
     return
   }
