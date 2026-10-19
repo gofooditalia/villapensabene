@@ -21,9 +21,13 @@ layout o logica.
 > tecnici (come viene fatto rispettare "solo data/site.config.ts" a livello
 > di workflow, non solo di istruzioni).
 >
-> `app/api/whatsapp-webhook/route.ts` è il webhook che riceve i messaggi del
-> titolare e apre le issue con label `whatsapp-request`: è infrastruttura,
-> non contenuto, già coperto dal divieto generale su `app/**` sotto.
+> `app/api/whatsapp-webhook/route.ts` e `app/api/telegram-webhook/route.ts`
+> sono i webhook che ricevono i messaggi del titolare (WhatsApp o Telegram)
+> e aprono le issue con label `whatsapp-request` / `telegram-request`: sono
+> infrastruttura, non contenuto, già coperti dal divieto generale su
+> `app/**` sotto. Dove questo file dice "WhatsApp" per la notifica al
+> cliente, vale allo stesso modo per Telegram: è il canale da cui è
+> arrivata la richiesta.
 
 > Stato (ottobre 2026): la migrazione è FATTA. Tutti i contenuti (orari,
 > contatti, menu, promozioni, nav, SEO) vivono in `data/site.config.ts` e i

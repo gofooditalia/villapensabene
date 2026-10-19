@@ -22,10 +22,17 @@ name: Claude Content Request
 # e non viene aperta nessuna PR — questo è l'UNICO controllo rimasto prima
 # della pubblicazione, dato che non c'è più revisione umana.
 #
+# Canali: la issue può arrivare da WhatsApp (label "whatsapp-request" +
+# "wa-sender-<numero>", da app/api/whatsapp-webhook/route.ts) o da Telegram
+# (label "telegram-request" + "tg-sender-<chat id>", da
+# app/api/telegram-webhook/route.ts). La pipeline è identica, cambia solo
+# il canale della notifica finale.
+#
 # Secret richiesti (oltre a CLAUDE_CODE_OAUTH_TOKEN, già presente):
 # - WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID — stessi valori già
 #   su Vercel, copiati qui per permettere alla Action di notificare il
 #   titolare su WhatsApp a fine lavoro.
+# - TELEGRAM_BOT_TOKEN — stesso valore su Vercel, per le notifiche Telegram.
 
 on:
   issues:
@@ -43,7 +50,9 @@ concurrency:
 
 jobs:
   apply-content-change:
-    if: contains(github.event.issue.labels.*.name, 'whatsapp-request')
+    if: >-
+      contains(github.event.issue.labels.*.name, 'whatsapp-request') ||
+      contains(github.event.issue.labels.*.name, 'telegram-request')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,11 +66,15 @@ jobs:
           ISSUE_LABELS_JSON: ${{ toJSON(github.event.issue.labels.*.name) }}
         run: |
           SENDER=$(echo "$ISSUE_LABELS_JSON" | grep -oE '"wa-sender-[0-9]+"' | head -1 | grep -oE '[0-9]+' || true)
-          if [ -z "$SENDER" ]; then
-            echo "::warning::Nessuna label wa-sender-*: issue aperta a mano, niente notifiche WhatsApp per questa run."
-            echo "phone=" >> "$GITHUB_OUTPUT"
-          else
+          TG_CHAT=$(echo "$ISSUE_LABELS_JSON" | grep -oE '"tg-sender-[0-9]+"' | head -1 | grep -oE '[0-9]+' || true)
+          if [ -n "$SENDER" ]; then
             echo "phone=+$SENDER" >> "$GITHUB_OUTPUT"
+          else
+            echo "phone=" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tg_chat=$TG_CHAT" >> "$GITHUB_OUTPUT"
+          if [ -z "$SENDER" ] && [ -z "$TG_CHAT" ]; then
+            echo "::warning::Nessuna label wa-sender-*/tg-sender-*: issue aperta a mano, niente notifiche per questa run."
           fi
 
       - name: Setup pnpm
@@ -252,6 +265,22 @@ jobs:
             || { echo "::error::Invio WhatsApp fallito: $RESP"; exit 1; }
           echo "Risposta Meta: $RESP"
 
+      - name: Notifica Telegram - modifica pubblicata
+        if: steps.guard.outputs.changed == 'true' && steps.sender.outputs.tg_chat != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ steps.sender.outputs.tg_chat }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+            echo "::warning::Secret TELEGRAM_BOT_TOKEN mancante su questo repo, notifica non inviata."
+            exit 0
+          fi
+          RESP=$(curl -sS --fail-with-body -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d '{"chat_id":'"${CHAT_ID}"',"text":"✅ Fatto! La tua modifica è online: https://www.villapensabene.it"}') \
+            || { echo "::error::Invio Telegram fallito: $RESP"; exit 1; }
+          echo "Risposta Telegram: $RESP"
+
       - name: "Nessuna modifica applicata: commenta sull'issue"
         if: steps.guard.outputs.changed == 'false'
         env:
@@ -280,3 +309,21 @@ jobs:
             -d '{"messaging_product":"whatsapp","to":"'"${TO}"'","type":"text","text":{"body":'"${BODY_JSON}"'}}') \
             || { echo "::error::Invio WhatsApp fallito: $RESP"; exit 1; }
           echo "Risposta Meta: $RESP"
+
+      - name: Notifica Telegram - richiesta non chiara
+        if: steps.guard.outputs.changed == 'false' && steps.sender.outputs.tg_chat != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          CHAT_ID: ${{ steps.sender.outputs.tg_chat }}
+          TG_MESSAGE: ${{ steps.outcome.outputs.whatsapp_message }}
+        run: |
+          if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+            echo "::warning::Secret TELEGRAM_BOT_TOKEN mancante su questo repo, notifica non inviata."
+            exit 0
+          fi
+          PAYLOAD=$(python3 -c 'import json,os; print(json.dumps({"chat_id": int(os.environ["CHAT_ID"]), "text": os.environ["TG_MESSAGE"]}))')
+          RESP=$(curl -sS --fail-with-body -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD") \
+            || { echo "::error::Invio Telegram fallito: $RESP"; exit 1; }
+          echo "Risposta Telegram: $RESP"
