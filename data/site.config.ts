@@ -504,7 +504,11 @@ export const siteConfig: SiteConfig = {
           },
           { name: "Chianina di Angus (800 gr circa)", price: "€5.00/etto" },
           { name: "Tagliata di pollo con julienne di verdure stufate", price: "€16.00" },
-          { name: "Tagliata di manzo con rucola, grana e pomodorini", price: "€17.00" },
+          {
+            name: "Tagliata di manzo",
+            price: "€17.00",
+            description: "Con rucola, scaglie di grana e pomodorini",
+          },
           { name: "Stinco di maiale con contorno di patate al burro", price: "€17.00" },
           { name: "Filetto di vitello ai ferri with salsa al pepe rosa e patate arrosto", price: "€18.00" },
           {
