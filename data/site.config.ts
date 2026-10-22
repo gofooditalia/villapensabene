@@ -458,7 +458,7 @@ export const siteConfig: SiteConfig = {
           { name: "Tartare di tonno with menta, capperi, soia, mandorle e arancia", price: "€15.00" },
           {
             name: "Insalata di mare imperiale",
-            price: "€17.00",
+            price: "€19.00",
             description: "Calamaro, Cozze, Vongole, Polpo, Gambero Rosso, Scampi, Olio EVO, Sedano, Carote",
           },
           { name: "Zuppetta di pesce", price: "€18.00", description: "Cozze, Vongole, Gambero Rosso, Triglie" },
