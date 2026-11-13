@@ -235,6 +235,7 @@ export const siteConfig: SiteConfig = {
     specialHours: [
       { id: "2026-10-12", validFrom: "2026-10-12", validThrough: "2026-10-12", opens: "16:00", closes: "00:00" },
       { id: "2026-10-13", validFrom: "2026-10-13", validThrough: "2026-10-13", opens: "00:00", closes: "00:00" },
+      { id: "2026-12-08", validFrom: "2026-12-08", validThrough: "2026-12-08", opens: "13:00", closes: "00:00" },
     ],
     notices: [
       {
@@ -243,6 +244,13 @@ export const siteConfig: SiteConfig = {
         message:
           "Lunedì 12 ottobre siamo APERTI a cena · Martedì 13 ottobre CHIUSI per manutenzione straordinaria.",
         until: "2026-10-14T00:00:00+02:00",
+      },
+      {
+        id: "2026-12-08-immacolata",
+        title: "Martedì 8 dicembre · Pranzo dell'Immacolata 🎄",
+        message:
+          "Martedì 8 dicembre siamo APERTI a pranzo e a cena. A pranzo il Menu dell'Immacolata: Menu di Pesce 40€ · Menu di Carne 38€, bevande incluse. Prenota il tuo tavolo!",
+        until: "2026-12-08T15:00:00+01:00",
       },
     ],
   },
@@ -674,6 +682,7 @@ export const siteConfig: SiteConfig = {
   },
 
   reservationEventOptions: [
+    { value: "Pranzo dell'Immacolata (8 dicembre)", label: "🎄 Pranzo dell'Immacolata — Martedì 8 dicembre" },
     { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo", relatedPromoId: "compleanni-gazebo" },
     { value: "Cena / Menù alla Carta", label: "Cena / Menù alla Carta" },
     { value: "Giro Pizza", label: "Giro Pizza", relatedPromoId: "giro-pizza" },
