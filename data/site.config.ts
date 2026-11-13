@@ -177,6 +177,52 @@ export interface Seo {
   priceRange: string
 }
 
+// Sezione "Feste" (Immacolata, Natale, Veglione, Capodanno...). Ogni evento è
+// una scheda: con `menus` compilati mostra i menu completi, con `menus: []`
+// mostra `comingSoonText` ("menu in arrivo") e il tasto per chiedere info.
+export interface FestivityMenu {
+  id: string
+  title: string // "Menù di Pesce"
+  price: string // "40€" (stesso formato delle promozioni)
+  courses: { label: string; items: string[] }[] // es. { label: "Antipasti", items: [...] }
+}
+
+export interface Festivity {
+  id: string
+  emoji: string
+  title: string // "Pranzo dell'Immacolata"
+  dateLabel: string // "Martedì 8 Dicembre · a pranzo" (testo mostrato)
+  date: string // "YYYY-MM-DD" (per Google e per precompilare la prenotazione)
+  startTime: string // "HH:MM"
+  endTime: string // "HH:MM"
+  description: string
+  menus: FestivityMenu[]
+  drinksNote?: string // "Bevande incluse: ..."
+  comingSoonText?: string // mostrato quando `menus` è vuoto
+  // Deve essere IDENTICO al `value` di una voce in reservationEventOptions:
+  // il tasto "Prenota" della scheda preseleziona quella voce nel form.
+  reservationValue?: string
+  // Orari proposti nel form quando è selezionata questa festività (il form
+  // di base propone solo orari serali).
+  reservationTimes?: string[]
+  hideAfter: string // ISO datetime con offset Roma: la scheda sparisce da sola dopo
+  active: boolean
+}
+
+export interface Festivities {
+  sectionId: string
+  badge: string
+  title: string
+  description: string
+  heroCtaLabel: string // richiamo nella testata del sito
+  // Addobbi natalizi (neve nella testata, richiamo alle feste). Si spengono
+  // da soli dopo `decorUntil`, o subito con decorActive:false.
+  decorActive: boolean
+  decorUntil: string // ISO datetime con offset Roma
+  active: boolean
+  items: Festivity[]
+}
+
 export interface SiteConfig {
   business: Business
   hours: Hours
@@ -188,6 +234,7 @@ export interface SiteConfig {
   specialties: FeatureItem[]
   eventTypes: FeatureItem[]
   seasonalFeatures: SeasonalFeature[]
+  festivities: Festivities
   menu: {
     categories: MenuCategory[]
     fullMenuUrl: string
@@ -431,6 +478,136 @@ export const siteConfig: SiteConfig = {
       active: true,
     },
   ],
+
+  festivities: {
+    sectionId: "feste",
+    badge: "Natale 2026 a Villa Pensabene",
+    title: "Le Feste a Villa Pensabene 🎄",
+    description:
+      "Le feste sono più belle a tavola, insieme. Scopri i menu che abbiamo preparato per l'Immacolata, il Natale e il Capodanno e prenota il tuo tavolo per tempo.",
+    heroCtaLabel: "🎄 Scopri i menu delle Feste",
+    decorActive: true,
+    decorUntil: "2027-01-07T00:00:00+01:00",
+    active: true,
+    items: [
+      {
+        id: "immacolata-2026",
+        emoji: "✨",
+        title: "Pranzo dell'Immacolata",
+        dateLabel: "Martedì 8 Dicembre · a pranzo",
+        date: "2026-12-08",
+        startTime: "13:00",
+        endTime: "17:30",
+        description:
+          "Due percorsi completi, dall'aperitivo di benvenuto al dolce. Scegli il tuo menu e goditi la festa senza pensieri.",
+        menus: [
+          {
+            id: "immacolata-2026-pesce",
+            title: "Menù di Pesce",
+            price: "40€",
+            courses: [
+              { label: "Per iniziare", items: ["Aperitivo di benvenuto"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Insalata del Mediterraneo",
+                  "Gamberone in Tempura",
+                  "Involtino di Melanzana ripieno con Pesce Spada e Mentuccia",
+                  "Bruschetta di Tumminia con Alici Marinate al Pepe Rosa",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Busiate con Pesto di Zucchinette, quadrucci di Pesce Spada, Gambero e Mandorle tostate",
+                  "Timballino di Riso con crema di Scampi e Datterino",
+                ],
+              },
+              { label: "Secondo", items: ["Trancio di Salmone al forno con Asparagi al Burro"] },
+              { label: "Dolce", items: ["Mousse di Ricotta con Crumble di Cannolo e colata di Cioccolata"] },
+            ],
+          },
+          {
+            id: "immacolata-2026-carne",
+            title: "Menù di Carne",
+            price: "38€",
+            courses: [
+              { label: "Per iniziare", items: ["Aperitivo di benvenuto"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Caponatina",
+                  "Bruschetta di Tumminia con Lardo, Gorgonzola e Miele",
+                  "Polpettina di Zucca Rossa con Cipolla in Agrodolce",
+                  "Tuma fritta",
+                  "Cardo in Pastella",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Tortelloni ripieni con Speck e Scamorza in salsa al Burro e Salvia",
+                  "Timballino di Riso con Friarielli, Salsiccia e fonduta di Provolone",
+                ],
+              },
+              {
+                label: "Secondo",
+                items: ["Cosciotto di Maialino nero dei Nebrodi con Patate aromatizzate al Burro"],
+              },
+              { label: "Dolce", items: ["Mousse di Ricotta con Crumble di Cannolo e colata di Cioccolata"] },
+            ],
+          },
+        ],
+        drinksNote: "Bevande incluse: Acqua, Coca Cola e Vino Tenute Mokarta",
+        reservationValue: "Pranzo dell'Immacolata (8 dicembre)",
+        reservationTimes: ["13:00", "13:30", "14:00"],
+        hideAfter: "2026-12-08T17:30:00+01:00",
+        active: true,
+      },
+      {
+        id: "natale-2026",
+        emoji: "🎄",
+        title: "Pranzo di Natale",
+        dateLabel: "Venerdì 25 Dicembre · a pranzo",
+        date: "2026-12-25",
+        startTime: "13:00",
+        endTime: "17:30",
+        description: "Il pranzo più atteso dell'anno, da vivere in famiglia.",
+        menus: [],
+        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        hideAfter: "2026-12-25T17:30:00+01:00",
+        active: true,
+      },
+      {
+        id: "veglione-2026",
+        emoji: "🥂",
+        title: "Veglione di San Silvestro",
+        dateLabel: "Giovedì 31 Dicembre · a cena",
+        date: "2026-12-31",
+        startTime: "20:30",
+        endTime: "23:59",
+        description: "Salutiamo insieme il 2026 e brindiamo al nuovo anno.",
+        menus: [],
+        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        hideAfter: "2027-01-01T02:00:00+01:00",
+        active: true,
+      },
+      {
+        id: "capodanno-2027",
+        emoji: "🎆",
+        title: "Pranzo di Capodanno",
+        dateLabel: "Venerdì 1 Gennaio · a pranzo",
+        date: "2027-01-01",
+        startTime: "13:00",
+        endTime: "17:30",
+        description: "Il primo pranzo dell'anno, per iniziare il 2027 con gusto.",
+        menus: [],
+        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        hideAfter: "2027-01-01T17:30:00+01:00",
+        active: true,
+      },
+    ],
+  },
 
   menu: {
     fullMenuUrl: "https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria",
@@ -682,7 +859,7 @@ export const siteConfig: SiteConfig = {
   },
 
   reservationEventOptions: [
-    { value: "Pranzo dell'Immacolata (8 dicembre)", label: "🎄 Pranzo dell'Immacolata — Martedì 8 dicembre" },
+    { value: "Pranzo dell'Immacolata (8 dicembre)", label: "🎄 Pranzo dell'Immacolata — Martedì 8 dicembre", relatedPromoId: "immacolata-2026" },
     { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo", relatedPromoId: "compleanni-gazebo" },
     { value: "Cena / Menù alla Carta", label: "Cena / Menù alla Carta" },
     { value: "Giro Pizza", label: "Giro Pizza", relatedPromoId: "giro-pizza" },
@@ -692,6 +869,7 @@ export const siteConfig: SiteConfig = {
   ],
 
   nav: [
+    { label: "🎄 Feste", href: "#feste" },
     { label: "🎂 Compleanni Bimbi", href: "#compleanni-bimbi" },
     { label: "🍂 Pranzo Domenica", href: "#pranzo-domenica" },
     { label: "Proposta Gastronomica", href: "#about" },

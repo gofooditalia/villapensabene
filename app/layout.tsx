@@ -70,6 +70,49 @@ const restaurantJsonLd = {
   ],
 }
 
+// Eventi delle feste per Google (uno per ogni festività attiva in
+// data/site.config.ts → festivities.items).
+const festivityEventsJsonLd = siteConfig.festivities.active
+  ? siteConfig.festivities.items
+      .filter((item) => item.active)
+      .map((item) => ({
+        "@context": "https://schema.org",
+        "@type": "FoodEvent",
+        name: `${item.title} - ${siteConfig.business.name}`,
+        description: item.description,
+        startDate: `${item.date}T${item.startTime}:00+01:00`,
+        endDate: `${item.date}T${item.endTime}:00+01:00`,
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        url: `${SITE_URL}/#${siteConfig.festivities.sectionId}`,
+        image: `${SITE_URL}${siteConfig.seo.ogImage}`,
+        location: {
+          "@type": "Restaurant",
+          name: siteConfig.business.legalName,
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: siteConfig.business.address.street,
+            addressLocality: siteConfig.business.address.city,
+            addressRegion: siteConfig.business.address.region,
+            postalCode: siteConfig.business.address.postalCode,
+            addressCountry: siteConfig.business.address.country,
+          },
+        },
+        organizer: { "@type": "Restaurant", name: siteConfig.business.legalName, url: SITE_URL },
+        ...(item.menus.length > 0
+          ? {
+              offers: item.menus.map((menu) => ({
+                "@type": "Offer",
+                name: menu.title,
+                price: menu.price.replace(/[^0-9.,]/g, "").replace(",", "."),
+                priceCurrency: "EUR",
+                availability: "https://schema.org/InStock",
+                url: `${SITE_URL}/#${siteConfig.festivities.sectionId}`,
+              })),
+            }
+          : {}),
+      }))
+  : []
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -139,6 +182,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(restaurantJsonLd) }}
         />
+        {festivityEventsJsonLd.length > 0 && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(festivityEventsJsonLd) }}
+          />
+        )}
         {children}
         <Analytics />
       </body>

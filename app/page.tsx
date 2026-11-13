@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/navigation"
 import { HeroSection } from "@/components/hero-section"
+import { FesteSection } from "@/components/feste-section"
 import { AboutSection } from "@/components/about-section"
 import { MenuSection } from "@/components/menu-section"
 import { GallerySection } from "@/components/gallery-section"
@@ -12,6 +13,7 @@ export default function Page() {
     <main className="min-h-screen">
       <Navigation />
       <HeroSection />
+      <FesteSection />
       <AboutSection />
       <MenuSection />
       <GallerySection />

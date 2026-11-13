@@ -67,7 +67,8 @@ layout o logica.
 1. Identifica quale area di `site.config.ts` riguarda la richiesta:
    `business`, `hours`, `sections`, `pizzaFormulas`, `fixedMenus`,
    `giroPasta`, `specialties`/`eventTypes`/`quickFeatures`,
-   `seasonalFeatures`, `menu`, `reservationEventOptions`, `nav`, `seo`.
+   `seasonalFeatures`, `festivities`, `menu`, `reservationEventOptions`,
+   `nav`, `seo`.
 2. **Variazione temporanea di orario** (chiusura straordinaria, orario
    diverso per un giorno specifico): aggiorna ENTRAMBI i meccanismi, che
    non si generano a vicenda:
@@ -109,6 +110,27 @@ layout o logica.
    `relatedPromoId` sull'id di quella promo/sezione; se è generica (es.
    "Cena / Menù alla Carta", "Area Giochi Bimbi") lascia `relatedPromoId`
    assente, resta sempre visibile.
+4-bis. **Feste (Immacolata, Natale, Veglione, Capodanno...)**: tutto vive in
+   `festivities`. Ogni festività è una voce di `festivities.items`:
+   - **Arriva il menu di una festività già presente** (scheda "menu in
+     arrivo"): compila `menus` (uno o più menu, ognuno con `title`, `price`
+     nel formato `"40€"`, e `courses` = gruppi tipo "Antipasti"/"Primi" con
+     l'elenco dei piatti), aggiungi `drinksNote` se il cliente indica le
+     bevande, e correggi `dateLabel`/`date`/`startTime`/`endTime` se diversi.
+     Per rendere prenotabile la festività dal form: aggiungi una voce in
+     `reservationEventOptions` con `relatedPromoId` = `id` della festività, e
+     metti lo STESSO testo del suo `value` in `reservationValue`; in
+     `reservationTimes` vanno gli orari proposti (es. `["13:00", "13:30"]`).
+   - **Nuova festività**: aggiungi una voce in `festivities.items` copiando
+     la forma di una esistente (stessi campi, `id` nuovo). `hideAfter` = fine
+     dell'evento (ISO con offset Roma): la scheda e la voce nel form
+     spariscono da sole dopo quella data, non serve toglierle a mano.
+   - **Togliere una festività prima del tempo**: `active: false` sulla voce.
+   - Se quel giorno cambia anche l'orario di apertura (es. aperti a pranzo
+     di martedì), vale comunque il punto 2: aggiorna anche
+     `hours.specialHours` e `hours.notices`.
+   - Gli addobbi natalizi del sito (neve, richiamo nella testata) si spengono
+     da soli a `festivities.decorUntil`; `decorActive: false` li spegne subito.
 5. **Nuovo piatto, nuovo prezzo, nuova voce di menu**: modifica
    `menu.categories` direttamente. Il prezzo resta una stringa già formattata
    (es. `"€9.50"`, `"€5.00/etto"`, `"€20.00/€32.00"` per un range) — rispetta

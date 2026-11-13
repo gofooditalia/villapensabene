@@ -129,3 +129,33 @@
     @apply bg-background text-foreground;
   }
 }
+/* Neve natalizia nella testata (components/festive-decor.tsx). */
+@keyframes vp-snowfall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(18px, 50vh, 0) rotate(160deg);
+  }
+  100% {
+    transform: translate3d(-10px, 110vh, 0) rotate(320deg);
+  }
+}
+
+.vp-snowflake {
+  position: absolute;
+  top: 0;
+  color: rgba(255, 255, 255, 0.85);
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  animation-name: vp-snowfall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+  user-select: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-snowflake {
+    display: none;
+  }
+}

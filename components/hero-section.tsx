@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { ChevronDown, BookOpen, Calendar } from "lucide-react"
 import { HeroVideo } from "@/components/hero-video"
+import { FestiveHeroCta, FestiveSnow } from "@/components/festive-decor"
 import { siteConfig } from "@/data/site.config"
 
 export function HeroSection() {
@@ -11,6 +12,9 @@ export function HeroSection() {
         <HeroVideo />
         <div className="absolute inset-0 bg-foreground/50" />
       </div>
+
+      {/* Addobbi natalizi: si spengono da soli (vedi festivities in site.config.ts) */}
+      <FestiveSnow />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center text-white">
@@ -24,6 +28,7 @@ export function HeroSection() {
             className="w-32 h-32 md:w-48 md:h-48 drop-shadow-2xl"
           />
         </div>
+        <FestiveHeroCta />
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
           <Button
             size="lg"

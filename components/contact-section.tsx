@@ -1,16 +1,29 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { MapPin, Phone, Clock, Mail } from "lucide-react"
 import { siteConfig } from "@/data/site.config"
-import { isPromoActive } from "@/lib/site-helpers"
+import { isFestivityVisible, isPromoActive } from "@/lib/site-helpers"
+
+const DEFAULT_TIMES = ["19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00"]
 
 export function ContactSection() {
-  const visibleEventOptions = siteConfig.reservationEventOptions.filter(
-    (option) => !option.relatedPromoId || isPromoActive(siteConfig, option.relatedPromoId)
-  )
+  const [now, setNow] = useState<Date | null>(null)
+  useEffect(() => {
+    setNow(new Date())
+  }, [])
+
+  const festivities = siteConfig.festivities.active ? siteConfig.festivities.items : []
+
+  const visibleEventOptions = siteConfig.reservationEventOptions.filter((option) => {
+    if (!option.relatedPromoId) return true
+    // Voce legata a una festività: sparisce quando la festività è passata.
+    const festivity = siteConfig.festivities.items.find((f) => f.id === option.relatedPromoId)
+    if (festivity) return siteConfig.festivities.active && isFestivityVisible(festivity, now)
+    return isPromoActive(siteConfig, option.relatedPromoId)
+  })
 
   const [formData, setFormData] = useState({
     name: "",
@@ -26,9 +39,41 @@ export function ContactSection() {
     message: "",
   })
 
+  // Se l'evento scelto è una festività con orari propri (es. un pranzo), il
+  // form propone quelli al posto degli orari serali standard.
+  const selectedFestivity = festivities.find((f) => f.reservationValue && f.reservationValue === formData.event)
+  const timeOptions = selectedFestivity?.reservationTimes?.length ? selectedFestivity.reservationTimes : DEFAULT_TIMES
+
+  // Il tasto "Prenota" di una scheda della sezione Feste preseleziona qui
+  // evento, data e orario (vedi components/feste-section.tsx).
+  useEffect(() => {
+    const onPreselect = (e: Event) => {
+      const detail = (e as CustomEvent<{ event?: string; date?: string; time?: string }>).detail
+      if (!detail?.event) return
+      setFormData((prev) => ({
+        ...prev,
+        event: detail.event ?? prev.event,
+        date: detail.date ?? prev.date,
+        time: detail.time ?? prev.time,
+      }))
+    }
+    window.addEventListener("vp:prenota", onPreselect)
+    return () => window.removeEventListener("vp:prenota", onPreselect)
+  }, [])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
-    setFormData((prev) => ({ ...prev, [id]: value }))
+    setFormData((prev) => {
+      const next = { ...prev, [id]: value }
+      if (id === "event") {
+        // Cambiando evento, l'orario scelto potrebbe non essere più tra quelli proposti.
+        const festivity = festivities.find((f) => f.reservationValue && f.reservationValue === value)
+        const times = festivity?.reservationTimes?.length ? festivity.reservationTimes : DEFAULT_TIMES
+        if (!times.includes(next.time)) next.time = ""
+        if (festivity) next.date = festivity.date
+      }
+      return next
+    })
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -157,15 +202,9 @@ Allergie/Note: ${message || "Nessuna segnalazione"}`
                     className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent bg-background text-foreground"
                   >
                     <option value="" disabled>Seleziona orario</option>
-                    <option value="19:00">19:00</option>
-                    <option value="19:30">19:30</option>
-                    <option value="20:00">20:00</option>
-                    <option value="20:30">20:30</option>
-                    <option value="21:00">21:00</option>
-                    <option value="21:30">21:30</option>
-                    <option value="22:00">22:00</option>
-                    <option value="22:30">22:30</option>
-                    <option value="23:00">23:00</option>
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time}>{time}</option>
+                    ))}
                   </select>
                 </div>
               </div>
