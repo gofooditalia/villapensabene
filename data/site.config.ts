@@ -140,40 +140,6 @@ export interface SeasonalFeature {
   active: boolean
 }
 
-// Evento speciale una tantum (es. Cenone di San Silvestro, Capodanno) con uno
-// o più menù fissi stampati a portate (non il formato riassuntivo "4
-// antipasti" di FixedMenu: qui ogni portata elenca i piatti per intero, come
-// sulla locandina/social dell'evento).
-export interface SpecialEventMenuCourse {
-  heading: string
-  items: string[]
-}
-
-export interface SpecialEventMenu {
-  id: string
-  emoji?: string
-  title: string
-  price: string
-  priceNote?: string // es. "95€ prezzo ordinario dopo la prevendita"
-  courses: SpecialEventMenuCourse[]
-  note?: string // es. bevande incluse, lenticchie augurali...
-}
-
-export interface SpecialEvent {
-  id: string
-  badge: string
-  title: string
-  dateLabel: string
-  lead: string
-  description: string
-  poster?: string
-  video?: string
-  menus: SpecialEventMenu[]
-  ctaLabel: string
-  footerNote: string
-  active: boolean
-}
-
 export interface MenuItem {
   name: string
   price: string
@@ -211,6 +177,52 @@ export interface Seo {
   priceRange: string
 }
 
+// Sezione "Feste" (Immacolata, Natale, Veglione, Capodanno...). Ogni evento è
+// una scheda: con `menus` compilati mostra i menu completi, con `menus: []`
+// mostra `comingSoonText` ("menu in arrivo") e il tasto per chiedere info.
+export interface FestivityMenu {
+  id: string
+  title: string // "Menù di Pesce"
+  price: string // "40€" (stesso formato delle promozioni)
+  courses: { label: string; items: string[] }[] // es. { label: "Antipasti", items: [...] }
+}
+
+export interface Festivity {
+  id: string
+  emoji: string
+  title: string // "Pranzo dell'Immacolata"
+  dateLabel: string // "Martedì 8 Dicembre · a pranzo" (testo mostrato)
+  date: string // "YYYY-MM-DD" (per Google e per precompilare la prenotazione)
+  startTime: string // "HH:MM"
+  endTime: string // "HH:MM"
+  description: string
+  menus: FestivityMenu[]
+  drinksNote?: string // "Bevande incluse: ..."
+  comingSoonText?: string // mostrato quando `menus` è vuoto
+  // Deve essere IDENTICO al `value` di una voce in reservationEventOptions:
+  // il tasto "Prenota" della scheda preseleziona quella voce nel form.
+  reservationValue?: string
+  // Orari proposti nel form quando è selezionata questa festività (il form
+  // di base propone solo orari serali).
+  reservationTimes?: string[]
+  hideAfter: string // ISO datetime con offset Roma: la scheda sparisce da sola dopo
+  active: boolean
+}
+
+export interface Festivities {
+  sectionId: string
+  badge: string
+  title: string
+  description: string
+  heroCtaLabel: string // richiamo nella testata del sito
+  // Addobbi natalizi (neve nella testata, richiamo alle feste). Si spengono
+  // da soli dopo `decorUntil`, o subito con decorActive:false.
+  decorActive: boolean
+  decorUntil: string // ISO datetime con offset Roma
+  active: boolean
+  items: Festivity[]
+}
+
 export interface SiteConfig {
   business: Business
   hours: Hours
@@ -222,7 +234,7 @@ export interface SiteConfig {
   specialties: FeatureItem[]
   eventTypes: FeatureItem[]
   seasonalFeatures: SeasonalFeature[]
-  specialEvents: SpecialEvent[]
+  festivities: Festivities
   menu: {
     categories: MenuCategory[]
     fullMenuUrl: string
@@ -270,6 +282,7 @@ export const siteConfig: SiteConfig = {
     specialHours: [
       { id: "2026-10-12", validFrom: "2026-10-12", validThrough: "2026-10-12", opens: "16:00", closes: "00:00" },
       { id: "2026-10-13", validFrom: "2026-10-13", validThrough: "2026-10-13", opens: "00:00", closes: "00:00" },
+      { id: "2026-12-08", validFrom: "2026-12-08", validThrough: "2026-12-08", opens: "13:00", closes: "00:00" },
     ],
     notices: [
       {
@@ -278,6 +291,13 @@ export const siteConfig: SiteConfig = {
         message:
           "Lunedì 12 ottobre siamo APERTI a cena · Martedì 13 ottobre CHIUSI per manutenzione straordinaria.",
         until: "2026-10-14T00:00:00+02:00",
+      },
+      {
+        id: "2026-12-08-immacolata",
+        title: "Martedì 8 dicembre · Pranzo dell'Immacolata 🎄",
+        message:
+          "Martedì 8 dicembre siamo APERTI a pranzo e a cena. A pranzo il Menu dell'Immacolata: Menu di Pesce 40€ · Menu di Carne 38€, bevande incluse. Prenota il tuo tavolo!",
+        until: "2026-12-08T15:00:00+01:00",
       },
     ],
   },
@@ -459,113 +479,205 @@ export const siteConfig: SiteConfig = {
     },
   ],
 
-  specialEvents: [
-    {
-      id: "san-silvestro-2026",
-      badge: "Giovedì 31 Dicembre 2026",
-      title: "Cenone di San Silvestro 🥂",
-      dateLabel: "31 Dicembre 2026",
-      lead: "Festeggia l'arrivo del 2027 a Villa Pensabene!",
-      description:
-        "Prevendita fino al 10 dicembre 2026 con 5€ di sconto su tutti i menù. Prenotazione obbligatoria. 🎧 DJ set, musica e divertimento per tutta la notte.",
-      poster: "/events/san-silvestro-2026/cover.webp",
-      video: "/events/san-silvestro-2026/reel.mp4",
-      menus: [
-        {
-          id: "san-silvestro-2026-pesce",
-          emoji: "🐟",
-          title: "Menù di Pesce",
-          price: "90€ in prevendita",
-          priceNote: "95€ prezzo ordinario dopo il 10 dicembre",
-          courses: [
-            {
-              heading: "Benvenuto",
-              items: ["Bollicine con Supplì al Nero di Seppia, Stracciatella e Chips di Patate fresche"],
-            },
-            {
-              heading: "Antipasti",
-              items: [
-                "Ostrica con zeste di Lime",
-                "Salmone marinato con Pesto di Agrumi",
-                "Tartare di Tonno e Mele Granny Smith",
-                "Tentacolo di Polpo su bottone di Purea di Patate all'Erba Cipollina",
-              ],
-            },
-            {
-              heading: "Primi",
-              items: [
-                "Riso Basmati con Crema di Scampi e Stracciatella di Bufala",
-                "Paccheri freschi con Aragostella e Datterino",
-              ],
-            },
-            {
-              heading: "Secondo",
-              items: ["Trancio di Ricciola con riduzione ai Crostacei e Ricci"],
-            },
-          ],
-        },
-        {
-          id: "san-silvestro-2026-carne",
-          emoji: "🥩",
-          title: "Menù di Carne",
-          price: "85€ in prevendita",
-          priceNote: "90€ prezzo ordinario dopo il 10 dicembre",
-          courses: [
-            {
-              heading: "Benvenuto",
-              items: ["Bollicine con Supplì allo Zafferano e Parmigiano e Chips di Patate fresche"],
-            },
-            {
-              heading: "Antipasti",
-              items: [
-                "Carpaccio di Manzo con Rucola e scaglie di Grana",
-                "Tortino di Patate con cuore di Bufala e Pesto di Pistacchio",
-                "Cubo di Tuma Madonita panata al Panko con colatina di Miele all'Arancia",
-                "Cornucopia di Bresaola con Philadelphia e Pera",
-              ],
-            },
-            {
-              heading: "Primi",
-              items: [
-                "Riso Basmati con Crema di Zucca rossa, Angus e Asiago",
-                "Pacchero fresco con Finocchietto di montagna, Salsiccia di Maialino nero e Burrata di Bufala",
-              ],
-            },
-            {
-              heading: "Secondo",
-              items: [
-                "Rollata di Vitellina con Erbette e Lardo di Colonnata",
-                "Patate al forno gratinate al Parmigiano",
-              ],
-            },
-          ],
-        },
-        {
-          id: "san-silvestro-2026-bambini",
-          emoji: "🎈",
-          title: "Menù Bambini",
-          price: "30€ in prevendita",
-          priceNote: "35€ prezzo ordinario dopo il 10 dicembre",
-          courses: [
-            {
-              heading: "Il Menù",
-              items: [
-                "Rosa di Ferrarini con Mozzarella",
-                "Lasagna classica",
-                "Cotoletta di Pollo e Patatine",
-                "Dolce",
-              ],
-            },
-          ],
-          note: "Acqua e Coca-Cola incluse · Area giochi dedicata con animatrice",
-        },
-      ],
-      ctaLabel: "Prenota il tuo tavolo per il Cenone",
-      footerNote:
-        "Per entrambi i menù adulti: Lenticchie augurali, Cheesecake di Cannolo/Panettone/Pandoro, bevande incluse (Acqua, Coca-Cola, Vino delle Cantine Mokarta).",
-      active: true,
-    },
-  ],
+  festivities: {
+    sectionId: "feste",
+    badge: "Natale 2026 a Villa Pensabene",
+    title: "Le Feste a Villa Pensabene 🎄",
+    description:
+      "Le feste sono più belle a tavola, insieme. Scopri i menu che abbiamo preparato per l'Immacolata, il Natale e il Capodanno e prenota il tuo tavolo per tempo.",
+    heroCtaLabel: "🎄 Scopri i menu delle Feste",
+    decorActive: true,
+    decorUntil: "2027-01-07T00:00:00+01:00",
+    active: true,
+    items: [
+      {
+        id: "immacolata-2026",
+        emoji: "✨",
+        title: "Pranzo dell'Immacolata",
+        dateLabel: "Martedì 8 Dicembre · a pranzo",
+        date: "2026-12-08",
+        startTime: "13:00",
+        endTime: "17:30",
+        description:
+          "Due percorsi completi, dall'aperitivo di benvenuto al dolce. Scegli il tuo menu e goditi la festa senza pensieri.",
+        menus: [
+          {
+            id: "immacolata-2026-pesce",
+            title: "Menù di Pesce",
+            price: "40€",
+            courses: [
+              { label: "Per iniziare", items: ["Aperitivo di benvenuto"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Insalata del Mediterraneo",
+                  "Gamberone in Tempura",
+                  "Involtino di Melanzana ripieno con Pesce Spada e Mentuccia",
+                  "Bruschetta di Tumminia con Alici Marinate al Pepe Rosa",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Busiate con Pesto di Zucchinette, quadrucci di Pesce Spada, Gambero e Mandorle tostate",
+                  "Timballino di Riso con crema di Scampi e Datterino",
+                ],
+              },
+              { label: "Secondo", items: ["Trancio di Salmone al forno con Asparagi al Burro"] },
+              { label: "Dolce", items: ["Mousse di Ricotta con Crumble di Cannolo e colata di Cioccolata"] },
+            ],
+          },
+          {
+            id: "immacolata-2026-carne",
+            title: "Menù di Carne",
+            price: "38€",
+            courses: [
+              { label: "Per iniziare", items: ["Aperitivo di benvenuto"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Caponatina",
+                  "Bruschetta di Tumminia con Lardo, Gorgonzola e Miele",
+                  "Polpettina di Zucca Rossa con Cipolla in Agrodolce",
+                  "Tuma fritta",
+                  "Cardo in Pastella",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Tortelloni ripieni con Speck e Scamorza in salsa al Burro e Salvia",
+                  "Timballino di Riso con Friarielli, Salsiccia e fonduta di Provolone",
+                ],
+              },
+              {
+                label: "Secondo",
+                items: ["Cosciotto di Maialino nero dei Nebrodi con Patate aromatizzate al Burro"],
+              },
+              { label: "Dolce", items: ["Mousse di Ricotta con Crumble di Cannolo e colata di Cioccolata"] },
+            ],
+          },
+        ],
+        drinksNote: "Bevande incluse: Acqua, Coca Cola e Vino Tenute Mokarta",
+        reservationValue: "Pranzo dell'Immacolata (8 dicembre)",
+        reservationTimes: ["13:00", "13:30", "14:00"],
+        hideAfter: "2026-12-08T17:30:00+01:00",
+        active: true,
+      },
+      {
+        id: "natale-2026",
+        emoji: "🎄",
+        title: "Pranzo di Natale",
+        dateLabel: "Venerdì 25 Dicembre · a pranzo",
+        date: "2026-12-25",
+        startTime: "13:00",
+        endTime: "17:30",
+        description: "Il pranzo più atteso dell'anno, da vivere in famiglia.",
+        menus: [],
+        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        hideAfter: "2026-12-25T17:30:00+01:00",
+        active: true,
+      },
+      {
+        id: "veglione-2026",
+        emoji: "🥂",
+        title: "Cenone di San Silvestro",
+        dateLabel: "Giovedì 31 Dicembre · a cena",
+        date: "2026-12-31",
+        startTime: "20:30",
+        endTime: "23:59",
+        description:
+          "Prevendita fino al 10 dicembre 2026 con 5€ di sconto su tutti i menù (prezzi qui sotto già scontati; dal 11 dicembre: 95€ pesce, 90€ carne, 35€ bambini). Prenotazione obbligatoria. 🎧 DJ set, musica e divertimento per salutare il 2026 e brindare al 2027.",
+        menus: [
+          {
+            id: "veglione-2026-pesce",
+            title: "Menù di Pesce",
+            price: "90€",
+            courses: [
+              { label: "Benvenuto", items: ["Bollicine con Supplì al Nero di Seppia, Stracciatella e Chips di Patate fresche"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Ostrica con zeste di Lime",
+                  "Salmone marinato con Pesto di Agrumi",
+                  "Tartare di Tonno e Mele Granny Smith",
+                  "Tentacolo di Polpo su bottone di Purea di Patate all'Erba Cipollina",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Riso Basmati con Crema di Scampi e Stracciatella di Bufala",
+                  "Paccheri freschi con Aragostella e Datterino",
+                ],
+              },
+              { label: "Secondo", items: ["Trancio di Ricciola con riduzione ai Crostacei e Ricci"] },
+            ],
+          },
+          {
+            id: "veglione-2026-carne",
+            title: "Menù di Carne",
+            price: "85€",
+            courses: [
+              { label: "Benvenuto", items: ["Bollicine con Supplì allo Zafferano e Parmigiano e Chips di Patate fresche"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Carpaccio di Manzo con Rucola e scaglie di Grana",
+                  "Tortino di Patate con cuore di Bufala e Pesto di Pistacchio",
+                  "Cubo di Tuma Madonita panata al Panko con colatina di Miele all'Arancia",
+                  "Cornucopia di Bresaola con Philadelphia e Pera",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Riso Basmati con Crema di Zucca rossa, Angus e Asiago",
+                  "Pacchero fresco con Finocchietto di montagna, Salsiccia di Maialino nero e Burrata di Bufala",
+                ],
+              },
+              {
+                label: "Secondo",
+                items: ["Rollata di Vitellina con Erbette e Lardo di Colonnata", "Patate al forno gratinate al Parmigiano"],
+              },
+            ],
+          },
+          {
+            id: "veglione-2026-bambini",
+            title: "Menù Bambini",
+            price: "30€",
+            courses: [
+              {
+                label: "Il Menù",
+                items: ["Rosa di Ferrarini con Mozzarella", "Lasagna classica", "Cotoletta di Pollo e Patatine", "Dolce"],
+              },
+              { label: "Extra", items: ["Area giochi dedicata con animatrice"] },
+            ],
+          },
+        ],
+        drinksNote:
+          "Per i menù adulti: Lenticchie augurali, Cheesecake di Cannolo/Panettone/Pandoro e bevande incluse (Acqua, Coca-Cola, Vino delle Cantine Mokarta). Bambini: Acqua e Coca-Cola incluse.",
+        reservationValue: "Cenone di San Silvestro",
+        reservationTimes: ["20:30", "21:00", "21:30"],
+        hideAfter: "2027-01-01T02:00:00+01:00",
+        active: true,
+      },
+      {
+        id: "capodanno-2027",
+        emoji: "🎆",
+        title: "Pranzo di Capodanno",
+        dateLabel: "Venerdì 1 Gennaio · a pranzo",
+        date: "2027-01-01",
+        startTime: "13:00",
+        endTime: "17:30",
+        description: "Il primo pranzo dell'anno, per iniziare il 2027 con gusto.",
+        menus: [],
+        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        hideAfter: "2027-01-01T17:30:00+01:00",
+        active: true,
+      },
+    ],
+  },
 
   menu: {
     fullMenuUrl: "https://gofoodmenu.it/villa-pensabene-ristorante-pizzeria",
@@ -817,17 +929,18 @@ export const siteConfig: SiteConfig = {
   },
 
   reservationEventOptions: [
+    { value: "Pranzo dell'Immacolata (8 dicembre)", label: "🎄 Pranzo dell'Immacolata — Martedì 8 dicembre", relatedPromoId: "immacolata-2026" },
+    { value: "Cenone di San Silvestro", label: "🥂 Cenone di San Silvestro (31 Dicembre)", relatedPromoId: "veglione-2026" },
     { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo", relatedPromoId: "compleanni-gazebo" },
     { value: "Cena / Menù alla Carta", label: "Cena / Menù alla Carta" },
     { value: "Giro Pizza", label: "Giro Pizza", relatedPromoId: "giro-pizza" },
     { value: "Giro Pasta", label: "Giro Pasta", relatedPromoId: "giro-pasta" },
     { value: "Pranzo della Domenica (Agriturismo in città)", label: "Pranzo della Domenica — Agriturismo in città", relatedPromoId: "pranzo-domenica" },
     { value: "Evento Privato (Festa / Cerimonia)", label: "Evento Privato (Festa / Cerimonia)" },
-    { value: "Cenone di San Silvestro", label: "🥂 Cenone di San Silvestro (31 Dicembre)", relatedPromoId: "san-silvestro-2026" },
   ],
 
   nav: [
-    { label: "🥂 San Silvestro", href: "#san-silvestro-2026" },
+    { label: "🎄 Feste", href: "#feste" },
     { label: "🎂 Compleanni Bimbi", href: "#compleanni-bimbi" },
     { label: "🍂 Pranzo Domenica", href: "#pranzo-domenica" },
     { label: "Proposta Gastronomica", href: "#about" },
