@@ -572,9 +572,74 @@ export const siteConfig: SiteConfig = {
         date: "2026-12-25",
         startTime: "13:00",
         endTime: "17:30",
-        description: "Il pranzo più atteso dell'anno, da vivere in famiglia.",
-        menus: [],
-        comingSoonText: "Menu in arrivo nei prossimi giorni. Contattaci per informazioni e per prenotare in anticipo.",
+        description:
+          "Il pranzo più atteso dell'anno, da vivere in famiglia. Due percorsi completi, dalle bollicine augurali al dolce: scegli il tuo menu e prenota per tempo.",
+        menus: [
+          {
+            id: "natale-2026-pesce",
+            title: "Menù di Pesce",
+            price: "55€",
+            courses: [
+              { label: "Benvenuto", items: ["Bollicine Augurali", "Chips e Supplì Salmonati"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Insalata del Mediterraneo",
+                  "Bruschetta di Tumminia con Pesce Spada Affumicato, Ricotta di Pecora e Mirtilli",
+                  "Tartare di Tonno Rosso",
+                  "Gamberone in Tempura",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Risotto Carnaroli agli Scampi al profumo di Agrumi",
+                  "Paccheri Freschi al Ragù di Cerniotto e Datterino",
+                ],
+              },
+              { label: "Secondo", items: ["Involtino di Spigola ai Frutti di Mare al cartoccio"] },
+              {
+                label: "Dolce",
+                items: ["Tronchetto di Ricotta con Cioccolato Fondente, Scorze di Agrumi e Cannella"],
+              },
+            ],
+          },
+          {
+            id: "natale-2026-carne",
+            title: "Menù di Carne",
+            price: "50€",
+            courses: [
+              { label: "Benvenuto", items: ["Bollicine Augurali", "Chips e Supplì ai Formaggi"] },
+              {
+                label: "Antipasti",
+                items: [
+                  "Cupoletta di Zucchinette con Purea di Patate, Asiago e Noci",
+                  "Fagottino di Melanzane con Tuma Madonita e Datterino",
+                  "Bruschetta di Tumminia con Lardo di Colonnata e Marmellata di Fichi",
+                  "Nido di Valeriana con Carpaccio di Vitello e Bottoni di Senape",
+                ],
+              },
+              {
+                label: "Primi",
+                items: [
+                  "Risotto Carnaroli con Barbabietola, Burrata e Nocciole Tostate",
+                  "Girasoli ripieni ai Porcini con Crema di Taleggio e Speck",
+                ],
+              },
+              {
+                label: "Secondo",
+                items: ["Fagottino di Tacchino farcito con Fontina e Mortadella", "Contorno di Asparagi al Burro"],
+              },
+              {
+                label: "Dolce",
+                items: ["Tronchetto di Ricotta con Cioccolato Fondente, Scorze di Agrumi e Cannella"],
+              },
+            ],
+          },
+        ],
+        drinksNote: "Prezzi a persona. Bevande incluse: Acqua, Coca-Cola e Vino Cantine Mokarta",
+        reservationValue: "Pranzo di Natale (25 dicembre)",
+        reservationTimes: ["13:00", "13:30", "14:00"],
         hideAfter: "2026-12-25T17:30:00+01:00",
         active: true,
       },
@@ -930,6 +995,7 @@ export const siteConfig: SiteConfig = {
 
   reservationEventOptions: [
     { value: "Pranzo dell'Immacolata (8 dicembre)", label: "🎄 Pranzo dell'Immacolata — Martedì 8 dicembre", relatedPromoId: "immacolata-2026" },
+    { value: "Pranzo di Natale (25 dicembre)", label: "🎄 Pranzo di Natale — Venerdì 25 dicembre", relatedPromoId: "natale-2026" },
     { value: "Cenone di San Silvestro", label: "🥂 Cenone di San Silvestro (31 Dicembre)", relatedPromoId: "veglione-2026" },
     { value: "Compleanno Bimbi nel Gazebo", label: "🎂 Compleanno Bimbi nel Gazebo", relatedPromoId: "compleanni-gazebo" },
     { value: "Cena / Menù alla Carta", label: "Cena / Menù alla Carta" },
