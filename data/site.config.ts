@@ -304,7 +304,7 @@ export const siteConfig: SiteConfig = {
         id: "2026-12-25-natale",
         title: "Venerdì 25 dicembre · Pranzo di Natale 🎄",
         message:
-          "Il giorno di Natale siamo APERTI a pranzo e a cena. A pranzo il Menu di Natale: Menu di Pesce 55€ · Menu di Carne 50€, bevande incluse. Prenota il tuo tavolo!",
+          "Il giorno di Natale siamo APERTI a pranzo e a cena. A pranzo il Menu di Natale: Menu di Pesce 55€ · Menu di Carne 50€, bevande incluse · Menu Bambini 25€ con area giochi custodita. Prenota il tuo tavolo!",
         until: "2026-12-25T15:00:00+01:00",
       },
     ],
@@ -642,6 +642,14 @@ export const siteConfig: SiteConfig = {
                 label: "Dolce",
                 items: ["Tronchetto di Ricotta con Cioccolato Fondente, Scorze di Agrumi e Cannella"],
               },
+            ],
+          },
+          {
+            id: "natale-2026-bambini",
+            title: "Menù Bambini",
+            price: "25€",
+            courses: [
+              { label: "Incluso", items: ["Ingresso in Area Giochi climatizzata e custodita da Claudia"] },
             ],
           },
         ],
