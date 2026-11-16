@@ -283,6 +283,7 @@ export const siteConfig: SiteConfig = {
       { id: "2026-10-12", validFrom: "2026-10-12", validThrough: "2026-10-12", opens: "16:00", closes: "00:00" },
       { id: "2026-10-13", validFrom: "2026-10-13", validThrough: "2026-10-13", opens: "00:00", closes: "00:00" },
       { id: "2026-12-08", validFrom: "2026-12-08", validThrough: "2026-12-08", opens: "13:00", closes: "00:00" },
+      { id: "2026-12-25", validFrom: "2026-12-25", validThrough: "2026-12-25", opens: "13:00", closes: "00:00" },
     ],
     notices: [
       {
@@ -298,6 +299,13 @@ export const siteConfig: SiteConfig = {
         message:
           "Martedì 8 dicembre siamo APERTI a pranzo e a cena. A pranzo il Menu dell'Immacolata: Menu di Pesce 40€ · Menu di Carne 38€, bevande incluse. Prenota il tuo tavolo!",
         until: "2026-12-08T15:00:00+01:00",
+      },
+      {
+        id: "2026-12-25-natale",
+        title: "Venerdì 25 dicembre · Pranzo di Natale 🎄",
+        message:
+          "Il giorno di Natale siamo APERTI a pranzo e a cena. A pranzo il Menu di Natale: Menu di Pesce 55€ · Menu di Carne 50€, bevande incluse. Prenota il tuo tavolo!",
+        until: "2026-12-25T15:00:00+01:00",
       },
     ],
   },
@@ -558,7 +566,7 @@ export const siteConfig: SiteConfig = {
             ],
           },
         ],
-        drinksNote: "Bevande incluse: Acqua, Coca Cola e Vino Tenute Mokarta",
+        drinksNote: "Bevande incluse: Acqua, Coca Cola e Vino Cantine Mokarta",
         reservationValue: "Pranzo dell'Immacolata (8 dicembre)",
         reservationTimes: ["13:00", "13:30", "14:00"],
         hideAfter: "2026-12-08T17:30:00+01:00",
@@ -639,7 +647,7 @@ export const siteConfig: SiteConfig = {
         ],
         drinksNote: "Prezzi a persona. Bevande incluse: Acqua, Coca-Cola e Vino Cantine Mokarta",
         reservationValue: "Pranzo di Natale (25 dicembre)",
-        reservationTimes: ["13:00", "13:30", "14:00"],
+        reservationTimes: ["13:00"],
         hideAfter: "2026-12-25T17:30:00+01:00",
         active: true,
       },
